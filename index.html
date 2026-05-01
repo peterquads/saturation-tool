@@ -206,13 +206,20 @@ h3 { font-size: 16px; margin: 0 0 8px; letter-spacing: -0.01em; }
 .row-input select { width: 160px; }
 .row-input input:focus, .row-input select:focus { border-color: var(--text-primary); background: #fff; box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
 .row-input .unit { color: var(--text-muted); font-size: 11px; min-width: 14px; text-align: left; }
-.row-input .hint {
+/* Hint sits on its own row below the input — right-aligned, free to
+   wrap. Dropped white-space:nowrap that was causing clipping. */
+.hint-row {
+  font-size: 10.5px;
   color: var(--text-muted);
-  font-size: 10px;
   font-style: italic;
-  margin-top: 1px;
-  white-space: nowrap;
+  text-align: right;
+  padding: 0 0 6px;
+  line-height: 1.4;
+  margin-top: -2px;
 }
+.hint-row:empty { display: none; }
+/* legacy .hint inside value-grp, still used somewhere — keep tidy */
+.row-input .hint { color: var(--text-muted); font-size: 10px; font-style: italic; margin-top: 1px; }
 .row-input .hint:empty { display: none; }
 .section-h {
   font-size: 9.5px;
@@ -522,9 +529,9 @@ input[type=file] { display: none; }
           <span class="label-grp"><label>Target</label><span class="tip" data-tip="The ROAS you want to maintain. The tool finds the maximum daily spend that still hits this number on the saturation curve. If the target is higher than the model's peak ROAS, it'll flag as unreachable.">?</span></span>
           <span class="value-grp">
             <span class="ctl"><input id="tr" type="number" step="0.1"/><span class="unit">×</span></span>
-            <span class="hint" id="trhint"></span>
           </span>
         </div>
+        <div class="hint-row" id="trhint"></div>
       </div>
 
       <div class="section-h">Customer economics</div>
@@ -544,25 +551,19 @@ input[type=file] { display: none; }
       <div class="section-h"><span>LTV horizons</span><span class="tip tip-right" data-tip="Cumulative customer revenue at each horizon ÷ first-order revenue. 1.4× means every $1 of first-order revenue earns another $0.40 over 90 days. Pull these from your cohort tool. Generic defaults will give you the wrong answer.">?</span></div>
       <div class="row-input">
         <span class="label-grp"><label>3-month LTV</label></span>
-        <span class="value-grp">
-          <span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">×</span></span>
-          <span class="hint" id="l3hint"></span>
-        </span>
+        <span class="value-grp"><span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">×</span></span></span>
       </div>
+      <div class="hint-row" id="l3hint"></div>
       <div class="row-input">
         <span class="label-grp"><label>6-month LTV</label></span>
-        <span class="value-grp">
-          <span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">×</span></span>
-          <span class="hint" id="l6hint"></span>
-        </span>
+        <span class="value-grp"><span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">×</span></span></span>
       </div>
+      <div class="hint-row" id="l6hint"></div>
       <div class="row-input">
         <span class="label-grp"><label>12-month LTV</label></span>
-        <span class="value-grp">
-          <span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">×</span></span>
-          <span class="hint" id="l12hint"></span>
-        </span>
+        <span class="value-grp"><span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">×</span></span></span>
       </div>
+      <div class="hint-row" id="l12hint"></div>
 
       <div class="section-h">Modeling</div>
       <div class="row-input">
