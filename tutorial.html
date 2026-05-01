@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How to use this · Saturation Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root {
+  --bg: #faf7f2;
+  --bg-warm: #f5efe5;
+  --paper: #ffffff;
+  --ink: #1a1a1a;
+  --ink-2: #3a3a3a;
+  --muted: #7a7670;
+  --line: rgba(28,20,12,0.08);
+  --accent: #B7410E;
+  --accent-2: #E87A2D;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  background-image: radial-gradient(1100px 600px at 90% -10%, rgba(232,122,45,0.06), transparent 70%);
+  color: var(--ink);
+  margin: 0;
+  padding: 32px 24px 64px;
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 36px; letter-spacing: -0.005em; margin: 0 0 8px; line-height: 1.15; }
+h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 22px; letter-spacing: -0.005em; margin: 36px 0 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+h2:first-of-type { border-top: none; padding-top: 0; }
+h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 17px; margin: 22px 0 6px; }
+p { margin: 0 0 14px; color: var(--ink-2); }
+.eyebrow { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 12px; }
+.lede { font-size: 16px; color: var(--muted); margin-bottom: 28px; }
+ul, ol { color: var(--ink-2); padding-left: 22px; margin: 0 0 14px; }
+ul li, ol li { margin-bottom: 6px; }
+code { font-size: 13px; background: rgba(28,20,12,0.05); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+.callout { padding: 14px 16px; background: rgba(232,122,45,0.06); border-left: 3px solid var(--accent); border-radius: 6px; margin: 18px 0; font-size: 14px; color: var(--ink-2); }
+.callout strong { color: var(--ink); }
+.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.back { display: inline-block; font-size: 13px; margin-bottom: 24px; }
+table { border-collapse: collapse; font-size: 13px; margin: 8px 0 18px; }
+th, td { padding: 6px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<a class="back" href="index.html">← Back to the tool</a>
+
+<div class="eyebrow">Tutorial</div>
+<h1>How to use this</h1>
+<div class="lede">Read this once. Five minutes. The tool's not complicated, but the inputs that matter aren't the obvious ones.</div>
+
+<h2>1. Get your CSV</h2>
+<p>You need daily spend and revenue, ideally one row per day for the last 365 days. The CSV needs four columns:</p>
+<table>
+  <thead><tr><th>Column</th><th>What goes in it</th></tr></thead>
+  <tbody>
+    <tr><td><code>date</code></td><td>YYYY-MM-DD, one row per day</td></tr>
+    <tr><td><code>spend</code></td><td>Total ad spend that day, in dollars (no $ sign, no commas)</td></tr>
+    <tr><td><code>revenue</code></td><td>Attributed revenue from those ads that day</td></tr>
+    <tr><td><code>purchases</code></td><td>Order count. Optional but recommended. Drives the orders/new-customer columns.</td></tr>
+  </tbody>
+</table>
+<p>Pull this from wherever you trust your numbers. Meta Ads Manager export, your data warehouse, Triple Whale, Northbeam, a Google Sheet you've been keeping by hand. Doesn't matter. The tool only cares that the columns are right and the dates are sequential.</p>
+<p>One channel at a time. If you run Meta and Google, model them separately. They have different curves. Don't add them together.</p>
+<div class="callout">
+  <strong>Attribution choice matters.</strong> Pick one window (7-day click, 1-day click + 1-day view, whatever) and stick with it across all 365 days. If you switched mid-year, the curve fit will be a mess.
+</div>
+
+<h2>2. Upload it</h2>
+<p>Drag the CSV onto the upload card or click "Choose CSV file." If you just want to poke around first, hit "Try with demo data". That loads a synthetic 90-day dataset so you can see what a working fit looks like before you bring your own numbers.</p>
+<p>Nothing is uploaded anywhere. The fit runs in your browser. Close the tab and the data is gone.</p>
+
+<h2>3. Read the chart</h2>
+<p>The chart axes:</p>
+<ul>
+  <li><strong>X-axis:</strong> daily ad spend in dollars.</li>
+  <li><strong>Left Y-axis:</strong> dollars (revenue, contribution margin, the LTV-extended CM lines if you turn them on).</li>
+  <li><strong>Right Y-axis:</strong> ROAS multiplier.</li>
+</ul>
+<p>The lines:</p>
+<ul>
+  <li><strong>Revenue (orange area):</strong> the fitted Hill curve. This is what the model thinks revenue does as you push spend up.</li>
+  <li><strong>CM/day (green):</strong> day-1 contribution margin: revenue × (1 − VC%) − spend. Where this is below zero, you lose money on day-1 economics alone.</li>
+  <li><strong>ROAS (black):</strong> revenue / spend at each spend level.</li>
+  <li><strong>Marginal ROAS (gray dashed):</strong> what the next dollar of spend earns. Always lower than average ROAS once you're past the elbow.</li>
+  <li><strong>Breakeven (blue vertical):</strong> spend level where day-1 CM = 0. If this line doesn't appear, you're below breakeven across the entire spend range.</li>
+  <li><strong>Today (gray dashed vertical):</strong> your current daily spend. Set automatically from the CSV average; override in the inputs.</li>
+  <li><strong>Selected goal optimum (orange vertical):</strong> the spend the model recommends for whichever goal you picked in the dropdown.</li>
+</ul>
+
+<h2>4. The LTV multipliers are where you make or break this</h2>
+<p>This is the section everyone gets wrong, including the defaults the tool ships with.</p>
+<p>The LTV multipliers say: for every $1 a customer spends on their first order, how many dollars total will they spend over the next 3 / 6 / 12 months? A 1.4× three-month LTV means $1 first-order → $1.40 cumulative over 90 days.</p>
+<p>The defaults (1.4 / 1.8 / 2.5) are vague mid-tier DTC averages. They're almost certainly wrong for your brand. Specifically:</p>
+<ul>
+  <li><strong>Consumables, supplements, anything you reorder:</strong> LTV multipliers are higher (think 1.6× / 2.5× / 4.0× or more).</li>
+  <li><strong>Jewelry, furniture, mattresses, anything bought once a year or for gifts:</strong> LTV multipliers are lower (think 1.1× / 1.3× / 1.6×).</li>
+  <li><strong>Subscriptions:</strong> totally different shape. The multiplier accumulates as long as people stay subscribed.</li>
+</ul>
+<p>Pull your real numbers from a cohort tool: Lifetimely, Triple Whale, Polar, a manual cohort export from Shopify. Take 90-day cumulative customer revenue, divide by first-order revenue. That's your 3-month multiplier. Same for 180 and 365 days.</p>
+<div class="callout">
+  <strong>If you skip this step, the tool gives you wrong answers.</strong> A swing from 1.4× to 1.2× on the 3-month multiplier flips the recommendation from "scale up 70%" to "pull back to almost zero."
+</div>
+
+<h2>5. The other inputs, in order of how much they matter</h2>
+
+<h3>Variable cost %</h3>
+<p>What share of revenue gets eaten by COGS, shipping, payment processing before any margin shows up. Don't include fixed overhead. This is the part that scales with each order. Most DTC brands land between 30% and 45%. Get this from your P&amp;L or your finance person.</p>
+
+<h3>Recency half-life</h3>
+<p>Default is 60 days. This says: a day from 60 days ago counts half as much as today in the curve fit. Older days still count, just less.</p>
+<p>Use a shorter half-life (30d) if you've recently done something that changed efficiency: new creative, a price change, a structural Meta change you can feel. Use a longer half-life (180d+) if your account has been stable and you want the curve to lean on more data.</p>
+<p>Set to 0 to weight every day equally (legacy behavior). This is rarely what you want. Efficiency drifts.</p>
+
+<h3>NC share %</h3>
+<p>Share of attributed revenue from new customers vs returning customers. If your platform reports this directly, plug it in. Otherwise approximate from your customer count over the same window. Drives the "NC ROAS" and "new customers" columns in the spend ladder.</p>
+
+<h3>Adstock decay (λ)</h3>
+<p>Yesterday's spend still produces some revenue today. Adstock models that lag. Try 0.3 for Meta. That's the typical carryover. 0 to disable it (lets you sanity-check whether adstock is what's making the optima move).</p>
+
+<h3>Efficiency adjust ±%</h3>
+<p>Manual override on V_max. +10% = "I expect the platform to deliver 10% better than the historical fit." Use this for known forward-looking changes the data hasn't seen yet: a creative refresh you're confident in, a new placement that's testing well.</p>
+
+<h3>Median AOV</h3>
+<p>Auto-calculated from your CSV if you included <code>purchases</code>. Otherwise enter manually. Only affects the orders / new-customer columns in the spend ladder, not the curve or optima.</p>
+
+<h2>6. The goal selector</h2>
+<p>Pick the goal you actually want to optimize for. The tool computes all goals at the same time (you can see all of them in the tile row at the top), but the goal dropdown picks which one gets the highlighted vertical line on the chart and the highlighted row in the spend ladder.</p>
+<table>
+  <thead><tr><th>Goal</th><th>What the optimum is</th></tr></thead>
+  <tbody>
+    <tr><td>Max CM (today)</td><td>Spend that maximizes day-1 contribution margin only.</td></tr>
+    <tr><td>Max 3-month CM</td><td>Spend that maximizes CM with 3-month LTV factored in.</td></tr>
+    <tr><td>Max 6-month CM</td><td>Same with 6-month LTV.</td></tr>
+    <tr><td>Max 12-month CM</td><td>Same with 12-month LTV.</td></tr>
+    <tr><td>Max Revenue</td><td>Push spend up. Hill curve is monotone, so this is "as high as we'll model" (5× current).</td></tr>
+    <tr><td>Max NC Revenue</td><td>Same logic but counting only new-customer revenue.</td></tr>
+    <tr><td>Target ROAS</td><td>Max spend that still hits a ROAS target you set. Inputs appear when you select this goal.</td></tr>
+  </tbody>
+</table>
+
+<h2>7. What this tool can't do</h2>
+<p>It's a single-channel observational model. Some things it doesn't account for:</p>
+<ul>
+  <li><strong>It uses reported revenue, not incremental.</strong> Platforms over-attribute. The fitted curve is steeper than the actual causal one. A geo lift study (GeoLift, Haus, etc.) tells you the real number.</li>
+  <li><strong>It's stationary.</strong> The fit assumes the curve is stable across the window. If you've been changing creative, audiences, placements, the curve shifts and yesterday's fit doesn't predict tomorrow. The recency half-life setting helps with this; refitting monthly helps more.</li>
+  <li><strong>Recommendations past your observed spend range are extrapolation.</strong> If your data tops out at $20K/day and the tool recommends $50K, that's a model guess based on Hill curve shape, not evidence. Treat as directional.</li>
+  <li><strong>Cash flow timing isn't in the math.</strong> "Profitable at 12 months" is true on paper but you spent the cash on day 1. If working capital is tight, do the discounted version yourself.</li>
+  <li><strong>No cross-channel.</strong> Meta and Google halo each other. Modeling Meta alone misses some of that.</li>
+</ul>
+
+<h2>8. A reasonable workflow</h2>
+<ol>
+  <li>Pull 365 days of daily spend + revenue for one channel.</li>
+  <li>Get your real LTV multipliers from a cohort tool. Plug them in.</li>
+  <li>Set VC% from your P&amp;L, NC share from platform reporting.</li>
+  <li>Set recency half-life to 60 days unless you have a reason to go shorter or longer.</li>
+  <li>Pick the goal you actually care about. For most brands the right answer is 6-month or 12-month CM, not day-1.</li>
+  <li>Look at the optimum. Compare to today.</li>
+  <li>If the optimum is meaningfully higher than current spend, scale into it gradually. Don't jump straight to the recommended dollar figure. The model says nothing about how fast the auction can absorb new budget without breaking efficiency.</li>
+  <li>Refit monthly. Re-pull the CSV, reload the tool. The curve drifts.</li>
+</ol>
+
+<div class="foot">
+  Saturation Studio · MIT licensed · <a href="index.html">Back to the tool</a> · <a href="https://github.com/peterquads/saturation-tool" target="_blank" rel="noopener">Source on GitHub</a>
+</div>
+
+</div>
+</body>
+</html>
