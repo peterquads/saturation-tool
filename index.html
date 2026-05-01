@@ -1215,13 +1215,15 @@ function render() {
   const Vmax = vmaxFor(state.month);
 
   $('title').textContent = (state.brand || 'Untitled') + ' · Saturation Model';
-  $('subtitle').textContent = months[state.month] + ' (' + days + ' days) · fit on ' + fit.n + ' obs (' + (fit.fallback ? 'global w/ seasonality' : 'per-month') + ') · '
-    + DATA.points.length + ' total daily observations';
-  $('fitnote').textContent = 'V_max=' + fmtUsdFull(Vmax) + '/day, K=' + fmtUsdFull(fit.K) + ', h=' + fit.h.toFixed(2) +
-    ', R²=' + (fit.r2 || 0).toFixed(2) +
-    (state.hl > 0 ? ' · recency half-life ' + state.hl + 'd' : '') +
-    (state.lam > 0 ? ' · adstock λ=' + state.lam.toFixed(2) + ' (gain ' + adstockGain().toFixed(2) + '×)' : '') +
-    (state.eff !== 0 ? ' · efficiency adj ' + (state.eff>0?'+':'') + state.eff + '%' : '');
+  $('subtitle').textContent = 'Modeling ' + months[state.month] + ' · ' + DATA.points.length + ' days of data';
+  // Fit details: only show when something non-default is in play. Hidden
+  // on the default view so the page reads clean. The Summary CSV always
+  // carries V_max / K / h / R² for anyone who wants them.
+  const notes = [];
+  if (state.lam > 0) notes.push('adstock λ=' + state.lam.toFixed(2));
+  if (state.eff !== 0) notes.push('efficiency ' + (state.eff>0?'+':'') + state.eff + '%');
+  if (state.hl !== 60) notes.push('recency half-life ' + state.hl + 'd');
+  $('fitnote').textContent = notes.length ? notes.join(' · ') : '';
 
   if (state.aov > 0) {
     $('l3hint').textContent  = '≈ ' + fmtUsdFull(state.aov * state.l3)  + '/cust';
