@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Saturation Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root { --bg:#faf6f1; --paper:#fff; --ink:#1a1a1a; --muted:#777; --line:rgba(0,0,0,0.08);
+  --accent:#E87A2D; --green:#2d8a4e; --red:#c0392b; --blue:#1877F2;
+  --purple3:#9d6dff; --purple6:#5b4bb3; --purple12:#2a2370; --gray:#999; }
+* { box-sizing: border-box; }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); margin:0; padding:24px; line-height:1.4; }
+h1 { font-family:Georgia,serif; font-weight:500; font-size:24px; margin:0 0 4px; }
+h2 { font-family:Georgia,serif; font-weight:500; font-size:16px; margin:0 0 8px; }
+h3 { font-family:Georgia,serif; font-weight:500; font-size:14px; margin:0 0 6px; }
+.muted { color:var(--muted); font-size:11px; }
+.wrap { max-width:1240px; margin:0 auto; }
+.head-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+.row { display:grid; grid-template-columns:300px 1fr; gap:18px; margin-top:18px; }
+.card { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:18px; }
+.tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
+@media (min-width:1100px) { .tiles { grid-template-columns:repeat(7,1fr); } }
+.tile { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:12px; }
+.tile.active { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.tile .lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:6px; }
+.tile .big { font-size:18px; font-weight:500; font-variant-numeric:tabular-nums; }
+.tile .sub { font-size:11px; color:var(--muted); margin-top:2px; }
+.tile.neg .big { color:var(--red); }
+.row-input { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--line); font-size:12px; }
+.row-input:last-child { border-bottom:none; }
+.row-input .ctl { display:inline-flex; align-items:center; gap:6px; }
+.row-input input[type=number], .row-input input[type=text] {
+  width:96px; text-align:right; font-size:12px; font-variant-numeric:tabular-nums;
+  border:1px solid var(--line); border-radius:6px; padding:5px 8px; background:var(--bg); color:var(--ink); font-family:inherit; height:30px;
+}
+.row-input input[type=text] { text-align:left; width:160px; }
+.row-input select {
+  width:160px; text-align:left; font-size:12px;
+  border:1px solid var(--line); border-radius:6px; padding:4px 8px; background:var(--bg); color:var(--ink); font-family:inherit; height:30px;
+}
+.row-input label { color:var(--muted); }
+.row-input .unit { color:var(--muted); font-size:11px; margin-left:4px; }
+.row-input .hint { color:var(--muted); font-size:10px; margin-left:4px; }
+.toggles { padding-top:8px; margin-top:8px; border-top:1px solid var(--line); }
+.toggle { display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:12px; cursor:pointer; }
+.section-h { font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-top:12px; margin-bottom:4px; }
+svg { display:block; width:100%; height:380px; }
+.legend { display:flex; flex-wrap:wrap; gap:8px; font-size:10px; margin-top:8px; }
+.legend span { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,0.6); border:1px solid rgba(0,0,0,0.06); color:#555; }
+.legend i { display:inline-block; width:12px; height:2px; }
+.legend i.dash { background:transparent !important; border-top:1.5px dashed currentColor; height:0; width:14px; }
+.ladder-wrap { overflow-x:auto; margin-top:14px; max-height:400px; }
+table { width:100%; border-collapse:collapse; font-size:11px; font-variant-numeric:tabular-nums; min-width:900px; }
+th, td { padding:6px 8px; text-align:right; border-bottom:1px solid var(--line); }
+th { font-weight:400; color:var(--muted); position:sticky; top:0; background:var(--paper); }
+th:first-child, td:first-child { text-align:left; }
+tbody tr.row-active td { background:rgba(232,122,45,0.10); }
+tbody tr.row-active td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
+tbody tr.row-today td { background:rgba(0,0,0,0.04); }
+tbody tr.row-today td:first-child { box-shadow:inset 3px 0 0 #999; }
+tbody tr.row-active.row-today td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
+.foot { font-size:10px; color:var(--muted); margin-top:24px; line-height:1.5; }
+.dropzone { padding:48px; text-align:center; border:2px dashed rgba(0,0,0,0.15); border-radius:14px; background:rgba(255,255,255,0.5); cursor:pointer; transition:background 0.15s, border-color 0.15s; }
+.dropzone.drag { background:rgba(232,122,45,0.08); border-color:var(--accent); }
+.dropzone .icon { font-size:32px; margin-bottom:8px; }
+.dropzone .primary { font-size:14px; color:var(--ink); font-weight:500; }
+.dropzone .secondary { font-size:11px; color:var(--muted); margin-top:4px; }
+.dropzone a { color:var(--accent); text-decoration:none; border-bottom:1px solid currentColor; }
+button.btn { font-family:inherit; font-size:11px; padding:6px 12px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); cursor:pointer; }
+button.btn:hover { background:var(--bg); }
+button.btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.app-hidden { display:none !important; }
+.error { color:var(--red); font-size:12px; padding:12px; background:rgba(192,57,43,0.08); border-radius:8px; margin-top:12px; }
+input[type=file] { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============================================================ -->
+<!-- LANDING — shown until a CSV is loaded                         -->
+<!-- ============================================================ -->
+<div id="landing">
+  <h1>Saturation Studio</h1>
+  <div class="muted">Upload a CSV of daily ad spend + revenue. Get a Hill saturation curve, optimal-spend recommendations across LTV horizons, and a scenario-modeling chart. Runs entirely in your browser — no data leaves your machine.</div>
+
+  <div style="margin-top:24px">
+    <label for="fileInput" id="dropzone" class="dropzone">
+      <div class="icon">↑</div>
+      <div class="primary">Drop a CSV here, or click to choose a file</div>
+      <div class="secondary">CSV must have columns: <code>date</code>, <code>spend</code>, <code>revenue</code> (and optionally <code>purchases</code>) · <a href="template.csv" download>Download template</a></div>
+    </label>
+    <input type="file" id="fileInput" accept=".csv,text/csv" />
+    <div id="parseError" class="error app-hidden"></div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <h3>What this does</h3>
+    <ul style="font-size:12px; color:var(--muted); padding-left:18px; margin:0; line-height:1.6">
+      <li>Fits a <strong>Hill saturation curve</strong> to your daily spend → revenue data: <code>revenue = V_max · s^h / (K^h + s^h)</code></li>
+      <li>Computes <strong>optimal daily spend</strong> for six different goals — including 3-month, 6-month, and 12-month LTV-extended contribution margin</li>
+      <li>Lets you tune <strong>variable cost %, NC share, LTV multipliers, adstock decay, and recency weighting</strong> live</li>
+      <li>Shows a <strong>spend ladder</strong> with monthly projections and a <strong>chart</strong> overlaying revenue, ROAS, marginal ROAS, breakeven, today's spend, and the selected goal optimum</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>CSV format</h3>
+    <table style="font-size:11px; min-width:auto">
+      <thead><tr><th>Column</th><th>Required</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>date</td><td>yes</td><td>ISO YYYY-MM-DD or MM/DD/YYYY</td></tr>
+        <tr><td>spend</td><td>yes</td><td>Daily ad spend in dollars (raw numbers, no $ sign)</td></tr>
+        <tr><td>revenue</td><td>yes</td><td>Daily attributed ad revenue</td></tr>
+        <tr><td>purchases</td><td>optional</td><td>Daily order count — used for orders / new-customer projections</td></tr>
+      </tbody>
+    </table>
+    <div class="muted" style="margin-top:8px">90+ days recommended. 365 days gives the most stable fit. Days with $0 spend or $0 revenue are excluded automatically.</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- APP — shown after CSV is loaded                               -->
+<!-- ============================================================ -->
+<div id="app" class="app-hidden">
+  <div class="head-row">
+    <h1 id="title" style="margin-bottom:0"></h1>
+    <span class="muted" id="subtitle"></span>
+    <span style="margin-left:auto"></span>
+    <button class="btn" id="btnReload">Upload different CSV</button>
+  </div>
+  <div class="muted" id="fitnote"></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="row">
+    <div class="card">
+      <h2>Inputs</h2>
+
+      <div class="section-h">Brand</div>
+      <div class="row-input"><label>Name</label><span class="ctl"><input id="brand" type="text"/></span></div>
+
+      <div class="section-h">Period</div>
+      <div class="row-input"><label>Project month</label>
+        <select id="month">
+          <option value="0">January</option><option value="1">February</option><option value="2">March</option>
+          <option value="3">April</option><option value="4">May</option><option value="5">June</option>
+          <option value="6">July</option><option value="7">August</option><option value="8">September</option>
+          <option value="9">October</option><option value="10">November</option><option value="11">December</option>
+        </select>
+      </div>
+      <div class="row-input"><label>Goal (highlight)</label>
+        <select id="goal">
+          <option value="cm">Max CM (today)</option>
+          <option value="cm_3m" selected>Max 3-month CM</option>
+          <option value="cm_6m">Max 6-month CM</option>
+          <option value="cm_12m">Max 12-month CM</option>
+          <option value="revenue">Max Revenue</option>
+          <option value="nc_rev">Max NC Revenue</option>
+          <option value="target_roas">Target ROAS</option>
+        </select>
+      </div>
+
+      <div class="section-h">Customer economics</div>
+      <div class="row-input"><label>Variable cost</label><span class="ctl"><input id="vc" type="number" step="1"/><span class="unit">%</span></span></div>
+      <div class="row-input"><label>NC share</label><span class="ctl"><input id="nc" type="number" step="1"/><span class="unit">%</span></span></div>
+      <div class="row-input"><label>Median AOV</label><span class="ctl"><input id="aov" type="number" step="1"/><span class="unit">$</span></span></div>
+
+      <div class="section-h">LTV horizons</div>
+      <div class="row-input"><label>3-month LTV</label><span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">x</span></span></div>
+      <div class="row-input"><span></span><span class="hint" id="l3hint"></span></div>
+      <div class="row-input"><label>6-month LTV</label><span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">x</span></span></div>
+      <div class="row-input"><span></span><span class="hint" id="l6hint"></span></div>
+      <div class="row-input"><label>12-month LTV</label><span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">x</span></span></div>
+      <div class="row-input"><span></span><span class="hint" id="l12hint"></span></div>
+
+      <div class="section-h">Modeling</div>
+      <div class="row-input"><label>Recency half-life</label><span class="ctl"><input id="hl" type="number" step="15" min="0"/><span class="unit">days</span></span></div>
+      <div class="row-input"><label>Adstock decay (λ)</label><span class="ctl"><input id="lam" type="number" step="0.05" min="0" max="0.95"/><span class="unit">↻</span></span></div>
+      <div class="row-input"><label>Efficiency adj.</label><span class="ctl"><input id="eff" type="number" step="1"/><span class="unit">%</span></span></div>
+      <div class="row-input"><label>Target ROAS</label><span class="ctl"><input id="tr" type="number" step="0.1"/><span class="unit">x</span></span></div>
+      <div class="row-input"><span></span><span class="hint" id="trhint"></span></div>
+
+      <div class="section-h">Current state</div>
+      <div class="row-input"><label>Today's daily spend</label><span class="ctl"><input id="cur" type="number" step="100"/><span class="unit">$</span></span></div>
+
+      <div class="toggles">
+        <div class="section-h">Show on chart</div>
+        <label class="toggle"><span>3 + 6 + 12m CM (all)</span><input type="checkbox" id="tAll"/></label>
+        <label class="toggle"><span>3-month CM</span><input type="checkbox" id="t3"/></label>
+        <label class="toggle"><span>6-month CM</span><input type="checkbox" id="t6"/></label>
+        <label class="toggle"><span>12-month CM</span><input type="checkbox" id="t12"/></label>
+        <label class="toggle"><span>NC revenue</span><input type="checkbox" id="tNc"/></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Saturation curve</h2>
+      <svg id="chart" viewBox="0 0 800 380" preserveAspectRatio="none"></svg>
+      <div class="legend" id="legend"></div>
+      <div class="ladder-wrap">
+        <table id="ladder">
+          <thead><tr>
+            <th>Daily spend</th><th>Monthly spend</th><th>ROAS</th><th>NC ROAS</th>
+            <th>Monthly Revenue</th><th>Monthly NC Rev</th>
+            <th>Daily CM</th><th>Monthly CM</th><th>CMROAS</th>
+            <th>Daily Orders</th><th>New Customers</th>
+            <th>3m CM</th><th>6m CM</th><th>12m CM</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+'use strict';
+
+// ============================================================
+// CSV parsing
+// ============================================================
+function parseCSV(text) {
+  // Tiny CSV parser — handles quoted fields, CRLF, and trailing newline.
+  // No support for embedded commas + escaped quotes inside quoted fields,
+  // because ad-data CSVs don't have free-form text columns.
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
+  if (lines.length < 2) throw new Error('CSV needs a header row and at least one data row');
+  const header = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+  const required = ['date', 'spend', 'revenue'];
+  for (const col of required) {
+    if (!header.includes(col)) throw new Error(`Missing required column: "${col}". Header has: ${header.join(', ')}`);
+  }
+  const dateIdx = header.indexOf('date');
+  const spendIdx = header.indexOf('spend');
+  const revIdx = header.indexOf('revenue');
+  const purIdx = header.indexOf('purchases');
+
+  function normDate(s) {
+    s = s.trim().replace(/^"|"$/g, '');
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    // MM/DD/YYYY -> YYYY-MM-DD
+    const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    // Excel-style 5/1/25 -> 2025-05-01
+    const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+    if (m2) return `20${m2[3]}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
+    return s; // last-ditch
+  }
+
+  function num(s) {
+    if (s == null) return 0;
+    const cleaned = String(s).trim().replace(/^"|"$/g, '').replace(/[$,]/g, '');
+    const n = parseFloat(cleaned);
+    return isFinite(n) ? n : 0;
+  }
+
+  const points = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cells = lines[i].split(',').map(c => c.trim());
+    const date = normDate(cells[dateIdx] || '');
+    const spend = num(cells[spendIdx]);
+    const revenue = num(cells[revIdx]);
+    const purchases = purIdx >= 0 ? num(cells[purIdx]) : 0;
+    if (!date) continue;
+    points.push({ date, spend, revenue, purchases });
+  }
+  // Sort by date, dedupe (keep last)
+  points.sort((a, b) => a.date.localeCompare(b.date));
+  const seen = new Set(), out = [];
+  for (let i = points.length - 1; i >= 0; i--) {
+    if (seen.has(points[i].date)) continue;
+    seen.add(points[i].date);
+    out.unshift(points[i]);
+  }
+  if (out.length < 8) throw new Error(`CSV needs at least 8 valid daily rows. Got ${out.length}.`);
+  return out;
+}
+
+// ============================================================
+// Hill saturation math
+// ============================================================
+function hillRev(s, V, K, h) { if (s <= 0) return 0; return (V * Math.pow(s, h)) / (Math.pow(K, h) + Math.pow(s, h)); }
+function hillRoas(s, V, K, h) { if (s <= 0) return 0; return hillRev(s, V, K, h) / s; }
+function hillMargRoas(s, V, K, h) {
+  if (s <= 0) return 0;
+  const sh = Math.pow(s, h), Kh = Math.pow(K, h);
+  return (V * h * Kh * Math.pow(s, h - 1)) / Math.pow(Kh + sh, 2);
+}
+
+// 3-param Hill grid search, optionally with recency-decay weights.
+function fitSaturation(points, recencyHalfLifeDays) {
+  const pts = points.filter(p => p.spend > 50 && p.revenue > 0);
+  if (pts.length < 8) return { Vmax: 0, K: 1, h: 1, r2: 0, n: pts.length };
+
+  let weights = null;
+  if (recencyHalfLifeDays > 0) {
+    const ts = pts.map(p => new Date(p.date).getTime());
+    const maxTs = Math.max.apply(null, ts);
+    weights = ts.map(t => Math.pow(0.5, (maxTs - t) / 86400000 / recencyHalfLifeDays));
+  }
+
+  const maxRev = Math.max.apply(null, pts.map(p => p.revenue));
+  const maxSpend = Math.max.apply(null, pts.map(p => p.spend));
+  const meanSpend = pts.reduce((a, p) => a + p.spend, 0) / pts.length;
+
+  let best = { Vmax: maxRev * 2, K: meanSpend, h: 1, sse: Infinity };
+  const VmaxGrid = Array.from({ length: 20 }, (_, i) => maxRev * (1 + (i / 19) * 8));
+  const KGrid = Array.from({ length: 20 }, (_, i) => maxSpend * 0.05 * Math.pow(40, i / 19));
+  const hGrid = [0.6, 0.75, 0.9, 1.0, 1.15, 1.4, 1.7, 2.2];
+
+  for (const V of VmaxGrid) {
+    for (const K of KGrid) {
+      for (const h of hGrid) {
+        let sse = 0;
+        const Kh = Math.pow(K, h);
+        for (let i = 0; i < pts.length; i++) {
+          const sh = Math.pow(pts[i].spend, h);
+          const e = (V * sh) / (Kh + sh) - pts[i].revenue;
+          sse += weights ? weights[i] * e * e : e * e;
+        }
+        if (sse < best.sse) best = { Vmax: V, K, h, sse };
+      }
+    }
+  }
+  // Refine pass
+  const refV = Array.from({ length: 12 }, (_, i) => best.Vmax * (0.5 + (i / 11) * 1.0));
+  const refK = Array.from({ length: 12 }, (_, i) => best.K * (0.3 + (i / 11) * 2.0));
+  const refH = [best.h * 0.85, best.h * 0.93, best.h, best.h * 1.08, best.h * 1.18];
+  for (const V of refV) {
+    for (const K of refK) {
+      for (const h of refH) {
+        let sse = 0;
+        const Kh = Math.pow(K, h);
+        for (let i = 0; i < pts.length; i++) {
+          const sh = Math.pow(pts[i].spend, h);
+          const e = (V * sh) / (Kh + sh) - pts[i].revenue;
+          sse += weights ? weights[i] * e * e : e * e;
+        }
+        if (sse < best.sse) best = { Vmax: V, K, h, sse };
+      }
+    }
+  }
+  // Weighted R²
+  let mr = 0, ws = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const w = weights ? weights[i] : 1;
+    mr += pts[i].revenue * w; ws += w;
+  }
+  mr /= ws;
+  let sst = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const w = weights ? weights[i] : 1;
+    sst += w * (pts[i].revenue - mr) * (pts[i].revenue - mr);
+  }
+  const r2 = sst > 0 ? Math.max(0, 1 - best.sse / sst) : 0;
+  return { Vmax: best.Vmax, K: best.K, h: best.h, r2, n: pts.length };
+}
+
+function buildMonthFits(points, halfLife) {
+  const global = fitSaturation(points, halfLife);
+  const out = [];
+  for (let m = 0; m < 12; m++) {
+    const mp = points.filter(p => new Date(p.date).getUTCMonth() === m);
+    if (mp.length >= 8) {
+      const f = fitSaturation(mp, halfLife);
+      if (f.Vmax > 0) { out.push(Object.assign({}, f, { n: mp.length, fallback: false })); continue; }
+    }
+    out.push(Object.assign({}, global, { n: mp.length, fallback: true }));
+  }
+  return out;
+}
+
+function buildMonthMult(points) {
+  const revSums = Array(12).fill(0), spendSums = Array(12).fill(0);
+  for (const p of points) {
+    const m = new Date(p.date).getUTCMonth();
+    revSums[m] += p.revenue; spendSums[m] += p.spend;
+  }
+  const roas = revSums.map((r, i) => spendSums[i] > 0 ? r / spendSums[i] : 0);
+  const valid = roas.filter(x => x > 0);
+  const overall = valid.length ? valid.reduce((a, x) => a + x, 0) / valid.length : 1;
+  return roas.map(r => (r && overall ? r / overall : 1));
+}
+
+function medianAovOf(points) {
+  const aovs = points.filter(p => p.purchases > 0).map(p => p.revenue / p.purchases).sort((a, b) => a - b);
+  return aovs.length ? aovs[Math.floor(aovs.length / 2)] : 0;
+}
+
+function avgSpendOf(points) {
+  const valid = points.filter(p => p.spend > 0);
+  return valid.length ? valid.reduce((a, p) => a + p.spend, 0) / valid.length : 0;
+}
+
+function daysInMonth(month) { const y = new Date().getFullYear(); return new Date(y, month + 1, 0).getDate(); }
+
+// ============================================================
+// Formatters
+// ============================================================
+function fmtUsdFull(n) { if (!isFinite(n)) return '—'; return (n < 0 ? '-$' : '$') + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+function fmtUsd(n) {
+  if (!isFinite(n)) return '—';
+  if (Math.abs(n) >= 1e6) return (n<0?'-$':'$') + (Math.abs(n)/1e6).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1e3) return (n<0?'-$':'$') + (Math.abs(n)/1e3).toFixed(1) + 'k';
+  return (n<0?'-$':'$') + Math.round(Math.abs(n));
+}
+function fmtX(n) { return isFinite(n) ? n.toFixed(2) + 'x' : '—'; }
+function fmtInt(n) { return isFinite(n) ? Math.round(n).toLocaleString('en-US') : '—'; }
+
+// ============================================================
+// State + bootstrapping
+// ============================================================
+const $ = (id) => document.getElementById(id);
+
+let DATA = null; // populated after CSV upload
+const state = {
+  brand: 'My Brand',
+  month: new Date().getMonth(),
+  goal: 'cm_3m',
+  vc: 35, nc: 60, aov: 0,
+  l3: 1.4, l6: 1.8, l12: 2.5,
+  hl: 60, lam: 0, eff: 0, tr: 1.2,
+  cur: 0,
+  show3: false, show6: false, show12: false, showNc: false,
+};
+
+// ============================================================
+// File upload
+// ============================================================
+function loadCSVText(text, suggestedName) {
+  $('parseError').classList.add('app-hidden');
+  let points;
+  try {
+    points = parseCSV(text);
+  } catch (e) {
+    $('parseError').textContent = e.message;
+    $('parseError').classList.remove('app-hidden');
+    return;
+  }
+  const halfLife = state.hl;
+  const monthFits = buildMonthFits(points, halfLife);
+  const monthMult = buildMonthMult(points);
+  const aov = medianAovOf(points);
+  const avg = avgSpendOf(points);
+  DATA = { points, monthFits, monthMult, medianAov: aov, avgSpend: avg };
+  // Prefill brand from filename, AOV, current spend, project month
+  if (suggestedName) state.brand = suggestedName.replace(/\.csv$/i, '').replace(/[_-]/g, ' ');
+  state.aov = Math.round(aov);
+  state.cur = Math.round(avg);
+  state.month = new Date(points[points.length - 1].date).getUTCMonth();
+  hydrateInputs();
+  $('landing').classList.add('app-hidden');
+  $('app').classList.remove('app-hidden');
+  render();
+}
+
+function refit() {
+  if (!DATA) return;
+  DATA.monthFits = buildMonthFits(DATA.points, state.hl);
+  // monthMult and medianAov are recency-independent, no need to recompute.
+  render();
+}
+
+function setupUpload() {
+  const dz = $('dropzone');
+  const input = $('fileInput');
+  input.addEventListener('change', (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => loadCSVText(r.result, f.name);
+    r.readAsText(f);
+  });
+  ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', (e) => {
+    const f = e.dataTransfer.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => loadCSVText(r.result, f.name);
+    r.readAsText(f);
+  });
+}
+
+// ============================================================
+// Wire input controls
+// ============================================================
+function hydrateInputs() {
+  $('brand').value = state.brand;
+  $('month').value = state.month;
+  $('goal').value = state.goal;
+  $('vc').value = state.vc.toFixed(0);
+  $('nc').value = state.nc.toFixed(0);
+  $('aov').value = Math.round(state.aov);
+  $('l3').value = state.l3.toFixed(2);
+  $('l6').value = state.l6.toFixed(2);
+  $('l12').value = state.l12.toFixed(2);
+  $('hl').value = state.hl;
+  $('lam').value = state.lam.toFixed(2);
+  $('eff').value = state.eff.toFixed(0);
+  $('tr').value = state.tr.toFixed(2);
+  $('cur').value = Math.round(state.cur);
+}
+
+function bindInputs() {
+  ['vc','nc','aov','l3','l6','l12','lam','eff','tr','cur'].forEach(k => {
+    $(k).addEventListener('input', () => { state[k] = parseFloat($(k).value) || 0; render(); });
+  });
+  // Half-life requires a refit, not just a re-render
+  $('hl').addEventListener('input', () => { state.hl = parseFloat($('hl').value) || 0; refit(); });
+  $('brand').addEventListener('input', () => { state.brand = $('brand').value || 'Untitled'; render(); });
+  $('month').addEventListener('change', () => { state.month = parseInt($('month').value, 10); render(); });
+  $('goal').addEventListener('change', () => { state.goal = $('goal').value; render(); });
+  ['t3','t6','t12','tNc'].forEach((k, i) => {
+    const sk = ['show3','show6','show12','showNc'][i];
+    $(k).addEventListener('change', () => {
+      state[sk] = $(k).checked;
+      $('tAll').checked = state.show3 && state.show6 && state.show12;
+      render();
+    });
+  });
+  $('tAll').addEventListener('change', () => {
+    const v = $('tAll').checked;
+    state.show3 = v; state.show6 = v; state.show12 = v;
+    $('t3').checked = v; $('t6').checked = v; $('t12').checked = v;
+    render();
+  });
+  $('btnReload').addEventListener('click', () => {
+    DATA = null;
+    $('app').classList.add('app-hidden');
+    $('landing').classList.remove('app-hidden');
+    $('fileInput').value = '';
+  });
+}
+
+// ============================================================
+// Computation helpers (curve, optima)
+// ============================================================
+function adstockGain() { return state.lam > 0 ? 1 / (1 - state.lam) : 1; }
+function fitFor(month) { return DATA.monthFits[month] || { Vmax:0, K:1, h:1, r2:0, n:0, fallback:true }; }
+
+function vmaxFor(month) {
+  const monthFit = DATA.monthFits[month];
+  if (!monthFit || !monthFit.Vmax) return 0;
+  const mm = monthFit.fallback ? (DATA.monthMult[month] || 1) : 1;
+  return monthFit.Vmax * mm * (1 + state.eff/100);
+}
+
+function findOptimum(margin) {
+  const fit = fitFor(state.month);
+  const Vmax = vmaxFor(state.month);
+  if (!Vmax || !fit.K) return { s: 0, cm: 0 };
+  const gain = adstockGain();
+  const maxS = Math.max(state.cur || 1000, 1000) * 8 * gain;
+  let bestS = 0, bestCm = -Infinity;
+  for (let i = 1; i <= 200; i++) {
+    const sEff = (i/200) * maxS;
+    const cm = margin * hillRev(sEff, Vmax, fit.K, fit.h) - sEff/gain;
+    if (cm > bestCm) { bestCm = cm; bestS = sEff/gain; }
+  }
+  return { s: bestS, cm: bestCm };
+}
+
+function peakRoas() {
+  const fit = fitFor(state.month);
+  const Vmax = vmaxFor(state.month);
+  if (!Vmax || !fit.K) return 0;
+  const gain = adstockGain();
+  const maxS = Math.max(state.cur || 1000, 1000) * 50 * gain;
+  let peak = 0;
+  for (let i = 0; i < 80; i++) {
+    const s = 50 + (i/79) * maxS;
+    peak = Math.max(peak, hillRoas(s, Vmax, fit.K, fit.h));
+  }
+  return peak;
+}
+
+function findTargetRoasSpend(target) {
+  const fit = fitFor(state.month);
+  const Vmax = vmaxFor(state.month);
+  if (!Vmax || !fit.K || target <= 0) return 0;
+  const gain = adstockGain();
+  const maxS = Math.max(state.cur || 1000, 1000) * 50 * gain;
+  if (target >= peakRoas()) return 0;
+  let lo = 1, hi = maxS;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (hillRoas(mid, Vmax, fit.K, fit.h) > target) lo = mid; else hi = mid;
+  }
+  return ((lo + hi) / 2) / gain;
+}
+
+// ============================================================
+// Render
+// ============================================================
+function render() {
+  if (!DATA) return;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const days = daysInMonth(state.month);
+  const fit = fitFor(state.month);
+  const Vmax = vmaxFor(state.month);
+
+  $('title').textContent = (state.brand || 'Untitled') + ' — Saturation Model';
+  $('subtitle').textContent = months[state.month] + ' (' + days + ' days) · fit on ' + fit.n + ' obs (' + (fit.fallback ? 'global w/ seasonality' : 'per-month') + ') · '
+    + DATA.points.length + ' total daily observations';
+  $('fitnote').textContent = 'V_max=' + fmtUsdFull(Vmax) + '/day, K=' + fmtUsdFull(fit.K) + ', h=' + fit.h.toFixed(2) +
+    ', R²=' + (fit.r2 || 0).toFixed(2) +
+    (state.hl > 0 ? ' · recency half-life ' + state.hl + 'd' : '') +
+    (state.lam > 0 ? ' · adstock λ=' + state.lam.toFixed(2) + ' (gain ' + adstockGain().toFixed(2) + 'x)' : '') +
+    (state.eff !== 0 ? ' · efficiency adj ' + (state.eff>0?'+':'') + state.eff + '%' : '');
+
+  if (state.aov > 0) {
+    $('l3hint').textContent  = '≈ ' + fmtUsdFull(state.aov * state.l3)  + '/cust';
+    $('l6hint').textContent  = '≈ ' + fmtUsdFull(state.aov * state.l6)  + '/cust';
+    $('l12hint').textContent = '≈ ' + fmtUsdFull(state.aov * state.l12) + '/cust';
+  } else {
+    $('l3hint').textContent = ''; $('l6hint').textContent = ''; $('l12hint').textContent = '';
+  }
+
+  const m = (1 - state.vc/100);
+  const ncFrac = state.nc/100;
+  const gain = adstockGain();
+  const peak = peakRoas();
+  const trSpend = findTargetRoasSpend(state.tr);
+  $('trhint').textContent = state.tr >= peak
+    ? 'unreachable — model peak ROAS is ' + fmtX(peak)
+    : 'reachable at ' + fmtUsdFull(trSpend) + '/day (peak ' + fmtX(peak) + ')';
+
+  const goalsList = [
+    { key:'cm',     lbl:'Max CM (today)',    optS: findOptimum(m).s,            margin:m },
+    { key:'cm_3m',  lbl:'Max 3-month CM',    optS: findOptimum(m*state.l3).s,   margin:m*state.l3 },
+    { key:'cm_6m',  lbl:'Max 6-month CM',    optS: findOptimum(m*state.l6).s,   margin:m*state.l6 },
+    { key:'cm_12m', lbl:'Max 12-month CM',   optS: findOptimum(m*state.l12).s,  margin:m*state.l12 },
+    { key:'revenue', lbl:'Max Revenue',      optS: state.cur*5,                 margin:1 },
+    { key:'nc_rev', lbl:'Max NC Revenue',    optS: state.cur*5,                 margin:ncFrac },
+    { key:'target_roas', lbl:'Target ROAS @ ' + fmtX(state.tr),  optS: trSpend, margin:m, unreachable: state.tr >= peak },
+  ];
+  const goalById = Object.fromEntries(goalsList.map(g => [g.key, g]));
+
+  const tilesEl = $('tiles');
+  tilesEl.innerHTML = '';
+  function tileFor(g, monthly) {
+    const sRaw = monthly ? state.cur : g.optS;
+    if (g.unreachable) {
+      const div = document.createElement('div');
+      div.className = 'tile' + (g.key === state.goal ? ' active' : '');
+      div.innerHTML = '<div class="lbl">' + g.lbl + '</div><div class="big" style="font-size:13px;color:var(--red)">unreachable</div><div class="sub">peak ROAS is ' + fmtX(peak) + '</div>';
+      tilesEl.appendChild(div); return;
+    }
+    const sEff = sRaw * gain;
+    const r = hillRev(sEff, Vmax, fit.K, fit.h);
+    const cm = m * r - sRaw;
+    const roas = sRaw > 0 ? r / sRaw : 0;
+    const isUnprofitable = cm < 0;
+    const headline = monthly ? fmtUsd(state.cur * days) : fmtUsdFull(sRaw);
+    const sub = monthly ? 'monthly @ ' + fmtUsdFull(state.cur) + '/day'
+                        : 'ROAS ' + fmtX(roas) + ' · CM ' + fmtUsd(cm) + '/d';
+    const div = document.createElement('div');
+    div.className = 'tile' + (isUnprofitable && !monthly ? ' neg' : '') + (g.key === state.goal ? ' active' : '');
+    div.innerHTML = '<div class="lbl">' + g.lbl + '</div><div class="big">' + headline + '</div><div class="sub">' + sub + '</div>';
+    tilesEl.appendChild(div);
+  }
+  for (const g of goalsList.slice(0, 4)) tileFor(g, false);
+  tileFor(goalById['target_roas'], false);
+  tileFor({ key:'__cur', lbl:'Current daily', optS: state.cur, margin:m }, false);
+  tileFor({ key:'__curMo', lbl:'Current monthly', optS: state.cur, margin:m }, true);
+
+  // Chart data
+  const activeOptS = goalById[state.goal] && !goalById[state.goal].unreachable ? goalById[state.goal].optS : state.cur;
+  const anchor = Math.max(activeOptS || 0, state.cur, 1000);
+  const minSpend = Math.max(50, anchor * 0.2);
+  const maxSpend = anchor * 3;
+  const N = 60;
+  const rows = [];
+  for (let i = 0; i <= N; i++) {
+    const s = minSpend + (i/N) * (maxSpend - minSpend);
+    const sEff = s * gain;
+    const r = hillRev(sEff, Vmax, fit.K, fit.h);
+    rows.push({
+      s, r, roas: r/s,
+      margRoas: hillMargRoas(sEff, Vmax, fit.K, fit.h) * gain,
+      cm: m * r - s,
+      cm3: m * state.l3 * r - s,
+      cm6: m * state.l6 * r - s,
+      cm12: m * state.l12 * r - s,
+      ncRev: r * ncFrac,
+    });
+  }
+
+  // Breakeven spend (Hill ROAS = 1/m). Reuse `peak`.
+  const breakevenRoas = 1 / m;
+  let breakevenSpend = null;
+  if (breakevenRoas < peak) {
+    let lo = 1, hi = maxSpend * gain;
+    for (let i = 0; i < 40; i++) {
+      const mid = (lo+hi)/2;
+      if (hillRoas(mid, Vmax, fit.K, fit.h) > breakevenRoas) lo = mid; else hi = mid;
+    }
+    breakevenSpend = ((lo+hi)/2) / gain;
+  }
+
+  // SVG render
+  const W = 800, H = 380, P = { l: 60, r: 60, t: 20, b: 30 };
+  const innerW = W - P.l - P.r, innerH = H - P.t - P.b;
+  const xMin = minSpend, xMax = maxSpend;
+  const dolMin = Math.min(0, ...rows.map(r => Math.min(
+    r.cm,
+    state.show3 ? r.cm3 : 0, state.show6 ? r.cm6 : 0, state.show12 ? r.cm12 : 0)));
+  const dolMax = Math.max(...rows.map(r => Math.max(r.r, state.showNc ? r.ncRev : 0))) * 1.05;
+  const roasMax = Math.max(...rows.map(r => Math.max(r.roas, r.margRoas))) * 1.1;
+  const xPx = (s) => P.l + ((s - xMin)/(xMax - xMin)) * innerW;
+  const yDolPx = (v) => P.t + (1 - (v - dolMin)/(dolMax - dolMin)) * innerH;
+  const yRoasPx = (v) => P.t + (1 - v/roasMax) * innerH;
+  const linePath = (data, key, scaler) => 'M ' + data.map(d => xPx(d.s) + ',' + scaler(d[key])).join(' L ');
+  const areaPath = (data, key, scaler) => {
+    const top = data.map(d => xPx(d.s) + ',' + scaler(d[key])).join(' L ');
+    return 'M ' + top + ' L ' + xPx(data[data.length-1].s) + ',' + yDolPx(0) + ' L ' + xPx(data[0].s) + ',' + yDolPx(0) + ' Z';
+  };
+
+  const lines = [];
+  lines.push('<defs>'
+    + '<linearGradient id="rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.4"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0.05"/></linearGradient>'
+    + '<linearGradient id="cmFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--green)" stop-opacity="0.28"/><stop offset="100%" stop-color="var(--green)" stop-opacity="0.04"/></linearGradient>'
+    + '<linearGradient id="cm3Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--purple3)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--purple3)" stop-opacity="0.03"/></linearGradient>'
+    + '<linearGradient id="cm6Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--purple6)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--purple6)" stop-opacity="0.03"/></linearGradient>'
+    + '<linearGradient id="cm12Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--purple12)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--purple12)" stop-opacity="0.03"/></linearGradient>'
+    + '<linearGradient id="ncFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a06600" stop-opacity="0.18"/><stop offset="100%" stop-color="#a06600" stop-opacity="0.02"/></linearGradient>'
+    + '</defs>');
+  for (let i = 0; i <= 4; i++) {
+    const y = P.t + (i/4)*innerH;
+    lines.push('<line x1="' + P.l + '" y1="' + y + '" x2="' + (W - P.r) + '" y2="' + y + '" stroke="rgba(0,0,0,0.05)"/>');
+    const dol = dolMax - (i/4)*(dolMax - dolMin);
+    lines.push('<text x="' + (P.l - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="10" fill="#777">' + fmtUsd(dol) + '</text>');
+    lines.push('<text x="' + (W - P.r + 6) + '" y="' + (y + 3) + '" font-size="10" fill="#777">' + (roasMax * (1 - i/4)).toFixed(2) + 'x</text>');
+  }
+  for (let i = 0; i <= 5; i++) {
+    const s = xMin + (i/5)*(xMax - xMin);
+    lines.push('<text x="' + xPx(s) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="#777">' + fmtUsd(s) + '</text>');
+  }
+
+  lines.push('<path d="' + areaPath(rows, 'r',  yDolPx) + '" fill="url(#rev)"/>');
+  lines.push('<path d="' + areaPath(rows, 'cm', yDolPx) + '" fill="url(#cmFill)"/>');
+  if (state.show3)  lines.push('<path d="' + areaPath(rows, 'cm3', yDolPx)  + '" fill="url(#cm3Fill)"/>');
+  if (state.show6)  lines.push('<path d="' + areaPath(rows, 'cm6', yDolPx)  + '" fill="url(#cm6Fill)"/>');
+  if (state.show12) lines.push('<path d="' + areaPath(rows, 'cm12', yDolPx) + '" fill="url(#cm12Fill)"/>');
+  if (state.showNc) lines.push('<path d="' + areaPath(rows, 'ncRev', yDolPx) + '" fill="url(#ncFill)"/>');
+  lines.push('<path d="' + linePath(rows, 'r', yDolPx)        + '" stroke="var(--accent)" stroke-width="1.6" fill="none"/>');
+  lines.push('<path d="' + linePath(rows, 'cm', yDolPx)       + '" stroke="var(--green)" stroke-width="1.6" fill="none"/>');
+  lines.push('<path d="' + linePath(rows, 'roas', yRoasPx)    + '" stroke="#1a1a1a" stroke-width="2" fill="none"/>');
+  lines.push('<path d="' + linePath(rows, 'margRoas', yRoasPx) + '" stroke="var(--gray)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>');
+  if (state.show3)  lines.push('<path d="' + linePath(rows, 'cm3', yDolPx)  + '" stroke="var(--purple3)" stroke-width="1.6" fill="none"/>');
+  if (state.show6)  lines.push('<path d="' + linePath(rows, 'cm6', yDolPx)  + '" stroke="var(--purple6)" stroke-width="1.7" fill="none"/>');
+  if (state.show12) lines.push('<path d="' + linePath(rows, 'cm12', yDolPx) + '" stroke="var(--purple12)" stroke-width="1.8" fill="none"/>');
+  if (state.showNc) lines.push('<path d="' + linePath(rows, 'ncRev', yDolPx) + '" stroke="#a06600" stroke-width="1.5" stroke-dasharray="2 3" fill="none"/>');
+  lines.push('<line x1="' + P.l + '" y1="' + yDolPx(0) + '" x2="' + (W - P.r) + '" y2="' + yDolPx(0) + '" stroke="rgba(0,0,0,0.18)"/>');
+  if (breakevenSpend && breakevenSpend >= xMin && breakevenSpend <= xMax) {
+    lines.push('<line x1="' + xPx(breakevenSpend) + '" y1="' + P.t + '" x2="' + xPx(breakevenSpend) + '" y2="' + (P.t + innerH) + '" stroke="#1877F2" stroke-width="1"/>');
+    lines.push('<text x="' + (xPx(breakevenSpend) + 6) + '" y="' + (P.t + 12) + '" font-size="10" fill="#1877F2">breakeven</text>');
+  }
+  if (state.cur >= xMin && state.cur <= xMax) {
+    lines.push('<line x1="' + xPx(state.cur) + '" y1="' + P.t + '" x2="' + xPx(state.cur) + '" y2="' + (P.t + innerH) + '" stroke="#666" stroke-dasharray="3 3" stroke-width="1"/>');
+    lines.push('<text x="' + (xPx(state.cur) + 6) + '" y="' + (P.t + 26) + '" font-size="10" fill="#444">today</text>');
+  }
+  if (activeOptS && activeOptS >= xMin && activeOptS <= xMax) {
+    lines.push('<line x1="' + xPx(activeOptS) + '" y1="' + P.t + '" x2="' + xPx(activeOptS) + '" y2="' + (P.t + innerH) + '" stroke="var(--accent)" stroke-width="1.5"/>');
+    lines.push('<text x="' + (xPx(activeOptS) + 6) + '" y="' + (P.t + 40) + '" font-size="10" fill="var(--accent)" font-weight="500">' + (goalById[state.goal] ? goalById[state.goal].lbl : 'optimum') + '</text>');
+  }
+  $('chart').innerHTML = lines.join('');
+
+  const leg = [
+    { c: 'var(--accent)', t: 'Revenue', show: true, area: true },
+    { c: 'var(--green)',  t: 'CM/day',  show: true, area: true },
+    { c: '#1a1a1a',       t: 'ROAS',    show: true },
+    { c: 'var(--gray)',   t: 'Marginal ROAS', show: true, dash: true },
+    { c: '#1877F2',       t: 'Breakeven spend', show: !!breakevenSpend },
+    { c: 'var(--accent)', t: 'Selected goal optimum', show: !!activeOptS && activeOptS >= xMin && activeOptS <= xMax },
+    { c: '#666',          t: 'Today', show: state.cur >= xMin && state.cur <= xMax, dash: true },
+    { c: 'var(--purple3)',  t: '3-month CM',  show: state.show3,  area: true },
+    { c: 'var(--purple6)',  t: '6-month CM',  show: state.show6,  area: true },
+    { c: 'var(--purple12)', t: '12-month CM', show: state.show12, area: true },
+    { c: '#a06600',         t: 'NC revenue',  show: state.showNc, area: true },
+  ];
+  $('legend').innerHTML = leg.filter(l => l.show).map(l => {
+    let swatch;
+    if (l.area) swatch = '<i style="height:8px; width:14px; background:' + l.c + '; opacity:0.45; border-radius:2px"></i>';
+    else if (l.dash) swatch = '<i class="dash" style="border-top-color:' + l.c + '"></i>';
+    else swatch = '<i style="background:' + l.c + '"></i>';
+    return '<span><span style="color:#555;display:inline-flex;align-items:center;gap:4px">' + swatch + l.t + '</span></span>';
+  }).join('');
+
+  // Spend ladder
+  const ladderStart = state.cur * 0.4;
+  const ladderEnd = Math.max(activeOptS * 1.6, state.cur * 2.5);
+  const step = (ladderEnd - ladderStart) / 29;
+  let activeIdx = -1, todayIdx = -1, activeBest = Infinity, todayBest = Infinity;
+  for (let i = 0; i < 30; i++) {
+    const s = ladderStart + i * step;
+    if (activeOptS && Math.abs(s - activeOptS) < activeBest) { activeBest = Math.abs(s - activeOptS); activeIdx = i; }
+    if (Math.abs(s - state.cur) < todayBest) { todayBest = Math.abs(s - state.cur); todayIdx = i; }
+  }
+  const tbody = $('ladder').querySelector('tbody');
+  tbody.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const s = ladderStart + i * step;
+    if (s <= 0) continue;
+    const sEff = s * gain;
+    const r = hillRev(sEff, Vmax, fit.K, fit.h);
+    const cm = m * r - s;
+    const ncRev = r * ncFrac;
+    const orders = state.aov > 0 ? r / state.aov : 0;
+    const newCustomers = orders * ncFrac;
+    const cm3 = m * state.l3 * r - s;
+    const cm6 = m * state.l6 * r - s;
+    const cm12 = m * state.l12 * r - s;
+    const tr = document.createElement('tr');
+    const cls = (i === activeIdx ? ' row-active' : '') + (i === todayIdx ? ' row-today' : '');
+    if (cls) tr.className = cls.trim();
+    const ng = (v) => v < 0 ? ' style="color:var(--red)"' : '';
+    tr.innerHTML =
+      '<td>' + fmtUsdFull(s) + '</td>' +
+      '<td>' + fmtUsdFull(s * days) + '</td>' +
+      '<td>' + fmtX(r/s) + '</td>' +
+      '<td>' + fmtX(s > 0 ? ncRev/s : 0) + '</td>' +
+      '<td>' + fmtUsdFull(r * days) + '</td>' +
+      '<td>' + fmtUsdFull(ncRev * days) + '</td>' +
+      '<td' + ng(cm) + '>' + fmtUsdFull(cm) + '</td>' +
+      '<td' + ng(cm) + '>' + fmtUsdFull(cm * days) + '</td>' +
+      '<td>' + fmtX(s > 0 ? cm/s : 0) + '</td>' +
+      '<td>' + fmtInt(orders) + '</td>' +
+      '<td>' + fmtInt(newCustomers) + '</td>' +
+      '<td' + ng(cm3) + '>' + fmtUsdFull(cm3) + '</td>' +
+      '<td' + ng(cm6) + '>' + fmtUsdFull(cm6) + '</td>' +
+      '<td' + ng(cm12) + '>' + fmtUsdFull(cm12) + '</td>';
+    tbody.appendChild(tr);
+  }
+
+  $('foot').textContent = 'Hill saturation: revenue = V_max · s^h / (K^h + s^h). Optimum solves max [m · revenue(s) - s] where m = (1 - VC) · LTV. Adstock applies steady-state gain s_eff = s_raw / (1 - λ). '
+    + 'Per-month curves use only that month\'s daily observations when 8+ days exist; otherwise the global fit is scaled by month-of-year seasonality. '
+    + 'Recency half-life weights each day by 0.5^(days_back / half_life) — set to 0 for equal weighting. '
+    + 'Curve fit on ' + DATA.points.length + ' daily observations from ' + DATA.points[0].date + ' to ' + DATA.points[DATA.points.length-1].date + '. '
+    + 'All math runs locally in your browser; your CSV never leaves your device.';
+}
+
+setupUpload();
+bindInputs();
+</script>
+</body>
+</html>
