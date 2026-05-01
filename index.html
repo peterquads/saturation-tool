@@ -5,131 +5,259 @@
 <title>Saturation Studio</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-:root { --bg:#faf6f1; --paper:#fff; --ink:#1a1a1a; --muted:#777; --line:rgba(0,0,0,0.08);
-  --accent:#E87A2D; --green:#2d8a4e; --red:#c0392b; --blue:#1877F2;
-  --purple3:#9d6dff; --purple6:#5b4bb3; --purple12:#2a2370; --gray:#999; }
+:root {
+  --bg: #faf7f2;
+  --bg-warm: #f5efe5;
+  --paper: rgba(255,255,255,0.62);
+  --paper-solid: #ffffff;
+  --ink: #1a1a1a;
+  --ink-2: #3a3a3a;
+  --muted: #7a7670;
+  --line: rgba(28,20,12,0.08);
+  --line-soft: rgba(28,20,12,0.04);
+  --accent: #B7410E;
+  --accent-2: #E87A2D;
+  --accent-bg: rgba(232,122,45,0.08);
+  --green: #2d8a4e;
+  --red: #b3361f;
+  --blue: #1565c0;
+  --purple3: #9d6dff;
+  --purple6: #5b4bb3;
+  --purple12: #2a2370;
+  --gray: #999;
+  --shadow: 0 1px 0 rgba(255,255,255,0.55) inset, 0 1px 2px rgba(28,20,12,0.04), 0 8px 32px -16px rgba(28,20,12,0.10);
+}
 * { box-sizing: border-box; }
-body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); margin:0; padding:24px; line-height:1.4; }
-h1 { font-family:Georgia,serif; font-weight:500; font-size:24px; margin:0 0 4px; }
-h2 { font-family:Georgia,serif; font-weight:500; font-size:16px; margin:0 0 8px; }
-h3 { font-family:Georgia,serif; font-weight:500; font-size:14px; margin:0 0 6px; }
-.muted { color:var(--muted); font-size:11px; }
-.wrap { max-width:1240px; margin:0 auto; }
-.head-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
-.row { display:grid; grid-template-columns:300px 1fr; gap:18px; margin-top:18px; }
-.card { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:18px; }
-.tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
-@media (min-width:1100px) { .tiles { grid-template-columns:repeat(7,1fr); } }
-.tile { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:12px; }
-.tile.active { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
-.tile .lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:6px; }
-.tile .big { font-size:18px; font-weight:500; font-variant-numeric:tabular-nums; }
-.tile .sub { font-size:11px; color:var(--muted); margin-top:2px; }
-.tile.neg .big { color:var(--red); }
-.row-input { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--line); font-size:12px; }
-.row-input:last-child { border-bottom:none; }
-.row-input .ctl { display:inline-flex; align-items:center; gap:6px; }
-.row-input input[type=number], .row-input input[type=text] {
-  width:96px; text-align:right; font-size:12px; font-variant-numeric:tabular-nums;
-  border:1px solid var(--line); border-radius:6px; padding:5px 8px; background:var(--bg); color:var(--ink); font-family:inherit; height:30px;
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(1100px 600px at 90% -10%, rgba(232,122,45,0.06), transparent 70%),
+    radial-gradient(900px 500px at -10% 110%, rgba(40,80,140,0.04), transparent 70%);
+  color: var(--ink);
+  margin: 0;
+  padding: 32px 24px 48px;
+  line-height: 1.5;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
 }
-.row-input input[type=text] { text-align:left; width:160px; }
-.row-input select {
-  width:160px; text-align:left; font-size:12px;
-  border:1px solid var(--line); border-radius:6px; padding:4px 8px; background:var(--bg); color:var(--ink); font-family:inherit; height:30px;
+h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 30px; letter-spacing: -0.005em; margin: 0 0 4px; line-height: 1.15; }
+h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 18px; letter-spacing: -0.005em; margin: 0 0 10px; }
+h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 15px; margin: 0 0 8px; }
+.muted { color: var(--muted); font-size: 11px; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+.head-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.eyebrow { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 12px; }
+
+/* Glass cards — translucent paper with inset highlight + soft shadow */
+.card, .glass {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow);
 }
-.row-input label { color:var(--muted); }
-.row-input .unit { color:var(--muted); font-size:11px; margin-left:4px; }
-.row-input .hint { color:var(--muted); font-size:10px; margin-left:4px; }
-.toggles { padding-top:8px; margin-top:8px; border-top:1px solid var(--line); }
-.toggle { display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:12px; cursor:pointer; }
-.section-h { font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-top:12px; margin-bottom:4px; }
-svg { display:block; width:100%; height:380px; }
-.legend { display:flex; flex-wrap:wrap; gap:8px; font-size:10px; margin-top:8px; }
-.legend span { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,0.6); border:1px solid rgba(0,0,0,0.06); color:#555; }
-.legend i { display:inline-block; width:12px; height:2px; }
-.legend i.dash { background:transparent !important; border-top:1.5px dashed currentColor; height:0; width:14px; }
-.ladder-wrap { overflow-x:auto; margin-top:14px; max-height:400px; }
-table { width:100%; border-collapse:collapse; font-size:11px; font-variant-numeric:tabular-nums; min-width:900px; }
-th, td { padding:6px 8px; text-align:right; border-bottom:1px solid var(--line); }
-th { font-weight:400; color:var(--muted); position:sticky; top:0; background:var(--paper); }
-th:first-child, td:first-child { text-align:left; }
-tbody tr.row-active td { background:rgba(232,122,45,0.10); }
-tbody tr.row-active td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
-tbody tr.row-today td { background:rgba(0,0,0,0.04); }
-tbody tr.row-today td:first-child { box-shadow:inset 3px 0 0 #999; }
-tbody tr.row-active.row-today td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
-.foot { font-size:10px; color:var(--muted); margin-top:24px; line-height:1.5; }
-.dropzone { padding:48px; text-align:center; border:2px dashed rgba(0,0,0,0.15); border-radius:14px; background:rgba(255,255,255,0.5); cursor:pointer; transition:background 0.15s, border-color 0.15s; }
-.dropzone.drag { background:rgba(232,122,45,0.08); border-color:var(--accent); }
-.dropzone .icon { font-size:32px; margin-bottom:8px; }
-.dropzone .primary { font-size:14px; color:var(--ink); font-weight:500; }
-.dropzone .secondary { font-size:11px; color:var(--muted); margin-top:4px; }
-.dropzone a { color:var(--accent); text-decoration:none; border-bottom:1px solid currentColor; }
-button.btn { font-family:inherit; font-size:11px; padding:6px 12px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); cursor:pointer; }
-button.btn:hover { background:var(--bg); }
-button.btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
-.app-hidden { display:none !important; }
-.error { color:var(--red); font-size:12px; padding:12px; background:rgba(192,57,43,0.08); border-radius:8px; margin-top:12px; }
-input[type=file] { display:none; }
+
+/* Tile row */
+.tiles { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-top: 16px; }
+@media (min-width: 760px) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1100px) { .tiles { grid-template-columns: repeat(7, 1fr); } }
+.tile {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow);
+}
+.tile.active { border-color: rgba(183,65,14,0.45); box-shadow: 0 0 0 1px var(--accent), 0 1px 0 rgba(255,255,255,0.55) inset, 0 8px 32px -16px rgba(183,65,14,0.18); }
+.tile .lbl { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 6px; }
+.tile .big { font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.tile .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.tile.neg .big { color: var(--red); }
+
+/* Two-column main row */
+.row { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 18px; }
+@media (min-width: 900px) { .row { grid-template-columns: 300px 1fr; } }
+
+/* Settings panel rows */
+.row-input { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 12px; }
+.row-input:last-child { border-bottom: none; }
+.row-input .ctl { display: inline-flex; align-items: center; gap: 6px; }
+.row-input input[type=number], .row-input input[type=text], .row-input select {
+  font-family: inherit;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 9px;
+  color: var(--ink);
+  height: 30px;
+  outline: none;
+  transition: border-color 0.12s, background 0.12s;
+}
+.row-input input[type=number] { width: 96px; text-align: right; }
+.row-input input[type=text] { width: 160px; }
+.row-input select { width: 160px; }
+.row-input input:focus, .row-input select:focus { border-color: var(--accent-2); background: #fff; }
+.row-input label { color: var(--ink-2); font-weight: 500; }
+.row-input .unit { color: var(--muted); font-size: 11px; margin-left: 4px; }
+.row-input .hint { color: var(--muted); font-size: 10px; }
+.section-h { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-top: 14px; margin-bottom: 4px; padding-top: 10px; border-top: 1px solid var(--line-soft); }
+.section-h:first-child, .row-input + .section-h, .toggle + .section-h { padding-top: 8px; }
+
+.toggles { padding-top: 10px; margin-top: 10px; border-top: 1px solid var(--line-soft); }
+.toggle { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; cursor: pointer; user-select: none; color: var(--ink-2); }
+.toggle.master { font-weight: 500; color: var(--ink); }
+
+svg { display: block; width: 100%; height: 360px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px; font-size: 10px; margin-top: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: rgba(255,255,255,0.6); border: 1px solid var(--line); color: var(--ink-2); }
+.legend i { display: inline-block; width: 12px; height: 2px; }
+.legend i.dash { background: transparent !important; border-top: 1.5px dashed currentColor; height: 0; width: 14px; }
+
+.ladder-wrap { overflow-x: auto; margin-top: 16px; max-height: 420px; border: 1px solid var(--line-soft); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; min-width: 900px; }
+th, td { padding: 7px 9px; text-align: right; border-bottom: 1px solid var(--line-soft); }
+th { font-weight: 500; color: var(--muted); position: sticky; top: 0; background: rgba(255,253,250,0.95); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+th:first-child, td:first-child { text-align: left; }
+tbody tr.row-active td { background: rgba(232,122,45,0.10); }
+tbody tr.row-active td:first-child { box-shadow: inset 3px 0 0 var(--accent-2); }
+tbody tr.row-today td { background: rgba(28,20,12,0.04); }
+tbody tr.row-today td:first-child { box-shadow: inset 3px 0 0 #999; }
+tbody tr.row-active.row-today td:first-child { box-shadow: inset 3px 0 0 var(--accent-2); }
+
+.foot { font-size: 10px; color: var(--muted); margin-top: 24px; line-height: 1.6; max-width: 800px; }
+
+/* Buttons */
+button.btn {
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper-solid);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.06s;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(28,20,12,0.04);
+}
+button.btn:hover { background: var(--bg-warm); }
+button.btn:active { transform: translateY(1px); }
+button.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.btn.primary:hover { background: #9c3409; }
+button.btn.ghost { background: transparent; }
+button.btn.ghost:hover { background: rgba(28,20,12,0.04); }
+
+/* Landing — upload card */
+.upload-card {
+  margin-top: 22px;
+  padding: 36px 28px;
+  text-align: center;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.45) 100%);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow);
+  transition: border-color 0.12s, background 0.12s;
+  position: relative;
+}
+.upload-card.drag {
+  border: 2px dashed var(--accent-2);
+  background: linear-gradient(180deg, rgba(232,122,45,0.06), rgba(232,122,45,0.02));
+}
+.upload-card .icon { font-size: 28px; margin-bottom: 10px; line-height: 1; color: var(--accent); }
+.upload-card .primary-line { font-size: 15px; color: var(--ink); font-weight: 500; margin-bottom: 4px; }
+.upload-card .secondary-line { font-size: 11.5px; color: var(--muted); }
+.upload-card .actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+.upload-card a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+.upload-card code { font-size: 11px; background: rgba(28,20,12,0.05); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+/* Two-column info grid */
+.info-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 22px; }
+@media (min-width: 760px) { .info-grid { grid-template-columns: 1fr 1fr; } }
+.info-grid ul { margin: 0; padding-left: 18px; line-height: 1.7; color: var(--ink-2); font-size: 12px; }
+.info-grid ul li { margin-bottom: 4px; }
+.info-grid ul li strong { color: var(--ink); font-weight: 500; }
+.info-grid table { min-width: 0; font-size: 11px; }
+.info-grid th { background: transparent; backdrop-filter: none; }
+.info-grid code { font-size: 11px; background: rgba(28,20,12,0.05); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+input[type=file] { display: none; }
+.error { color: var(--red); font-size: 12px; padding: 12px 14px; background: rgba(179,54,31,0.08); border: 1px solid rgba(179,54,31,0.2); border-radius: 10px; margin-top: 14px; }
+.app-hidden { display: none !important; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <!-- ============================================================ -->
-<!-- LANDING — shown until a CSV is loaded                         -->
+<!-- LANDING                                                      -->
 <!-- ============================================================ -->
 <div id="landing">
-  <h1>Saturation Studio</h1>
-  <div class="muted">Upload a CSV of daily ad spend + revenue. Get a Hill saturation curve, optimal-spend recommendations across LTV horizons, and a scenario-modeling chart. Runs entirely in your browser — no data leaves your machine.</div>
+  <div class="eyebrow">Saturation Studio</div>
+  <h1>Where does your next ad dollar break even?</h1>
+  <div class="muted" style="max-width: 720px; font-size: 13px;">
+    Upload daily ad spend + revenue. Get a Hill saturation curve, optimal-spend recommendations across 3-, 6-, and 12-month LTV horizons, and a scenario chart you can tune live. Runs entirely in your browser — your CSV never leaves your machine.
+  </div>
 
-  <div style="margin-top:24px">
-    <label for="fileInput" id="dropzone" class="dropzone">
-      <div class="icon">↑</div>
-      <div class="primary">Drop a CSV here, or click to choose a file</div>
-      <div class="secondary">CSV must have columns: <code>date</code>, <code>spend</code>, <code>revenue</code> (and optionally <code>purchases</code>) · <a href="template.csv" download>Download template</a></div>
-    </label>
+  <div id="dropzone" class="upload-card">
+    <div class="icon">↑</div>
+    <div class="primary-line">Drop a CSV here</div>
+    <div class="secondary-line">columns: <code>date</code> · <code>spend</code> · <code>revenue</code> · <code>purchases</code> (optional)</div>
+    <div class="actions">
+      <button class="btn primary" id="btnPick">Choose CSV file</button>
+      <button class="btn" id="btnDemo">Try with demo data</button>
+      <a href="template.csv" download class="btn ghost" style="display:inline-flex; align-items:center; text-decoration:none; border-style:solid">↓ Download template</a>
+    </div>
     <input type="file" id="fileInput" accept=".csv,text/csv" />
-    <div id="parseError" class="error app-hidden"></div>
   </div>
+  <div id="parseError" class="error app-hidden"></div>
 
-  <div class="card" style="margin-top:24px">
-    <h3>What this does</h3>
-    <ul style="font-size:12px; color:var(--muted); padding-left:18px; margin:0; line-height:1.6">
-      <li>Fits a <strong>Hill saturation curve</strong> to your daily spend → revenue data: <code>revenue = V_max · s^h / (K^h + s^h)</code></li>
-      <li>Computes <strong>optimal daily spend</strong> for six different goals — including 3-month, 6-month, and 12-month LTV-extended contribution margin</li>
-      <li>Lets you tune <strong>variable cost %, NC share, LTV multipliers, adstock decay, and recency weighting</strong> live</li>
-      <li>Shows a <strong>spend ladder</strong> with monthly projections and a <strong>chart</strong> overlaying revenue, ROAS, marginal ROAS, breakeven, today's spend, and the selected goal optimum</li>
-    </ul>
-  </div>
-
-  <div class="card" style="margin-top:18px">
-    <h3>CSV format</h3>
-    <table style="font-size:11px; min-width:auto">
-      <thead><tr><th>Column</th><th>Required</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td>date</td><td>yes</td><td>ISO YYYY-MM-DD or MM/DD/YYYY</td></tr>
-        <tr><td>spend</td><td>yes</td><td>Daily ad spend in dollars (raw numbers, no $ sign)</td></tr>
-        <tr><td>revenue</td><td>yes</td><td>Daily attributed ad revenue</td></tr>
-        <tr><td>purchases</td><td>optional</td><td>Daily order count — used for orders / new-customer projections</td></tr>
-      </tbody>
-    </table>
-    <div class="muted" style="margin-top:8px">90+ days recommended. 365 days gives the most stable fit. Days with $0 spend or $0 revenue are excluded automatically.</div>
+  <div class="info-grid">
+    <div class="card">
+      <h3>What it does</h3>
+      <ul>
+        <li>Fits a <strong>Hill saturation curve</strong> to your daily spend → revenue: <code>r = V·s^h / (K^h + s^h)</code></li>
+        <li>Computes <strong>optimal daily spend</strong> for seven goals — including 3m, 6m, and 12m LTV-extended CM</li>
+        <li>Tunes <strong>VC %, NC share, LTV multipliers, adstock decay, target ROAS, and recency weighting</strong> live</li>
+        <li>Per-month curves with seasonality fallback so November ≠ February</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>CSV format</h3>
+      <table>
+        <thead><tr><th>Column</th><th>Required</th></tr></thead>
+        <tbody>
+          <tr><td><code>date</code></td><td>yes — YYYY-MM-DD</td></tr>
+          <tr><td><code>spend</code></td><td>yes — daily $</td></tr>
+          <tr><td><code>revenue</code></td><td>yes — daily $</td></tr>
+          <tr><td><code>purchases</code></td><td>optional — order count</td></tr>
+        </tbody>
+      </table>
+      <div class="muted" style="margin-top: 8px; font-size: 10.5px">90+ days recommended. 365 gives the most stable fit. Days with $0 spend or $0 revenue are dropped automatically.</div>
+    </div>
   </div>
 </div>
 
 <!-- ============================================================ -->
-<!-- APP — shown after CSV is loaded                               -->
+<!-- APP                                                          -->
 <!-- ============================================================ -->
 <div id="app" class="app-hidden">
   <div class="head-row">
-    <h1 id="title" style="margin-bottom:0"></h1>
-    <span class="muted" id="subtitle"></span>
-    <span style="margin-left:auto"></span>
-    <button class="btn" id="btnReload">Upload different CSV</button>
+    <div class="eyebrow" style="margin: 0">Saturation Studio</div>
+    <span style="margin-left: auto"></span>
+    <button class="btn ghost" id="btnReload">↑ Upload different CSV</button>
   </div>
-  <div class="muted" id="fitnote"></div>
+  <h1 id="title" style="margin-top: 6px"></h1>
+  <div class="muted" id="subtitle"></div>
+  <div class="muted" id="fitnote" style="margin-top: 4px"></div>
 
   <div class="tiles" id="tiles"></div>
 
@@ -167,26 +295,26 @@ input[type=file] { display:none; }
       <div class="row-input"><label>Median AOV</label><span class="ctl"><input id="aov" type="number" step="1"/><span class="unit">$</span></span></div>
 
       <div class="section-h">LTV horizons</div>
-      <div class="row-input"><label>3-month LTV</label><span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">x</span></span></div>
+      <div class="row-input"><label>3-month LTV</label><span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">×</span></span></div>
       <div class="row-input"><span></span><span class="hint" id="l3hint"></span></div>
-      <div class="row-input"><label>6-month LTV</label><span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">x</span></span></div>
+      <div class="row-input"><label>6-month LTV</label><span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">×</span></span></div>
       <div class="row-input"><span></span><span class="hint" id="l6hint"></span></div>
-      <div class="row-input"><label>12-month LTV</label><span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">x</span></span></div>
+      <div class="row-input"><label>12-month LTV</label><span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">×</span></span></div>
       <div class="row-input"><span></span><span class="hint" id="l12hint"></span></div>
 
       <div class="section-h">Modeling</div>
       <div class="row-input"><label>Recency half-life</label><span class="ctl"><input id="hl" type="number" step="15" min="0"/><span class="unit">days</span></span></div>
       <div class="row-input"><label>Adstock decay (λ)</label><span class="ctl"><input id="lam" type="number" step="0.05" min="0" max="0.95"/><span class="unit">↻</span></span></div>
       <div class="row-input"><label>Efficiency adj.</label><span class="ctl"><input id="eff" type="number" step="1"/><span class="unit">%</span></span></div>
-      <div class="row-input"><label>Target ROAS</label><span class="ctl"><input id="tr" type="number" step="0.1"/><span class="unit">x</span></span></div>
+      <div class="row-input"><label>Target ROAS</label><span class="ctl"><input id="tr" type="number" step="0.1"/><span class="unit">×</span></span></div>
       <div class="row-input"><span></span><span class="hint" id="trhint"></span></div>
 
       <div class="section-h">Current state</div>
       <div class="row-input"><label>Today's daily spend</label><span class="ctl"><input id="cur" type="number" step="100"/><span class="unit">$</span></span></div>
 
       <div class="toggles">
-        <div class="section-h">Show on chart</div>
-        <label class="toggle"><span>3 + 6 + 12m CM (all)</span><input type="checkbox" id="tAll"/></label>
+        <div class="section-h" style="border:none; margin-top:0; padding-top:0">Show on chart</div>
+        <label class="toggle master"><span>3 + 6 + 12m CM (all)</span><input type="checkbox" id="tAll"/></label>
         <label class="toggle"><span>3-month CM</span><input type="checkbox" id="t3"/></label>
         <label class="toggle"><span>6-month CM</span><input type="checkbox" id="t6"/></label>
         <label class="toggle"><span>12-month CM</span><input type="checkbox" id="t12"/></label>
@@ -196,7 +324,7 @@ input[type=file] { display:none; }
 
     <div class="card">
       <h2>Saturation curve</h2>
-      <svg id="chart" viewBox="0 0 800 380" preserveAspectRatio="none"></svg>
+      <svg id="chart" viewBox="0 0 800 360" preserveAspectRatio="none"></svg>
       <div class="legend" id="legend"></div>
       <div class="ladder-wrap">
         <table id="ladder">
@@ -220,60 +348,140 @@ input[type=file] { display:none; }
 'use strict';
 
 // ============================================================
+// Inline demo dataset — 90 synthetic days drawn from a Hill curve
+// (V=$28K, K=$11K, h=1.20) plus DOW pattern + noise. Lets the demo
+// button work even on file:// where fetch() is blocked.
+// ============================================================
+const DEMO_CSV = `date,spend,revenue,purchases
+2025-08-01,4590,6541,108
+2025-08-02,3468,5402,79
+2025-08-03,5431,5888,93
+2025-08-04,2992,4220,65
+2025-08-05,3018,4675,69
+2025-08-06,4596,7330,110
+2025-08-07,5446,8252,116
+2025-08-08,5171,8057,138
+2025-08-09,6028,7837,137
+2025-08-10,3416,4880,73
+2025-08-11,5692,8873,135
+2025-08-12,6284,9578,145
+2025-08-13,5891,10237,142
+2025-08-14,5134,9778,174
+2025-08-15,4040,6365,112
+2025-08-16,4099,5196,86
+2025-08-17,5496,6514,104
+2025-08-18,4106,5804,79
+2025-08-19,5653,9420,161
+2025-08-20,5991,9010,144
+2025-08-21,6963,12286,186
+2025-08-22,5955,10499,149
+2025-08-23,4388,5398,88
+2025-08-24,4570,5287,72
+2025-08-25,6830,9064,133
+2025-08-26,5129,9449,147
+2025-08-27,4693,7530,114
+2025-08-28,4729,8795,121
+2025-08-29,5290,7902,106
+2025-08-30,5759,6965,124
+2025-08-31,4272,5657,80
+2025-09-01,5525,7037,112
+2025-09-02,7825,11840,160
+2025-09-03,7359,10034,145
+2025-09-04,6710,11587,192
+2025-09-05,6605,9132,143
+2025-09-06,5902,9203,127
+2025-09-07,5174,6452,110
+2025-09-08,7899,11880,195
+2025-09-09,6826,10950,188
+2025-09-10,7403,11947,170
+2025-09-11,6481,9483,154
+2025-09-12,4353,8211,113
+2025-09-13,7885,9532,169
+2025-09-14,8151,10441,183
+2025-09-15,6501,8043,115
+2025-09-16,7787,10393,161
+2025-09-17,6889,10398,144
+2025-09-18,6376,10060,153
+2025-09-19,7811,10671,174
+2025-09-20,9078,11656,183
+2025-09-21,6958,7265,122
+2025-09-22,6182,9111,153
+2025-09-23,5680,7979,118
+2025-09-24,5764,10892,151
+2025-09-25,5060,8383,123
+2025-09-26,5780,8265,112
+2025-09-27,7533,9706,138
+2025-09-28,8730,8760,153
+2025-09-29,6962,9515,148
+2025-09-30,8472,13062,175
+2025-10-01,5421,8958,145
+2025-10-02,9253,13346,226
+2025-10-03,7250,10838,179
+2025-10-04,6299,9620,151
+2025-10-05,9446,10333,184
+2025-10-06,10216,13992,189
+2025-10-07,9911,15224,260
+2025-10-08,7696,11105,176
+2025-10-09,5521,9440,127
+2025-10-10,6642,11267,176
+2025-10-11,7521,11115,149
+2025-10-12,8277,9917,170
+2025-10-13,6944,11086,167
+2025-10-14,8312,13164,234
+2025-10-15,8594,13147,183
+2025-10-16,6320,12447,219
+2025-10-17,6516,10519,154
+2025-10-18,6831,8056,111
+2025-10-19,6935,8409,125
+2025-10-20,7948,11008,168
+2025-10-21,10902,13324,192
+2025-10-22,7023,10997,161
+2025-10-23,7416,11680,167
+2025-10-24,6156,9656,129
+2025-10-25,11527,11296,190
+2025-10-26,7351,9653,133
+2025-10-27,10984,12768,219
+2025-10-28,10782,15411,229
+2025-10-29,11754,16752,302`;
+
+// ============================================================
 // CSV parsing
 // ============================================================
 function parseCSV(text) {
-  // Tiny CSV parser — handles quoted fields, CRLF, and trailing newline.
-  // No support for embedded commas + escaped quotes inside quoted fields,
-  // because ad-data CSVs don't have free-form text columns.
   const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').filter(l => l.length > 0);
-  if (lines.length < 2) throw new Error('CSV needs a header row and at least one data row');
+  if (lines.length < 2) throw new Error('CSV needs a header row and at least one data row.');
   const header = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
-  const required = ['date', 'spend', 'revenue'];
-  for (const col of required) {
+  for (const col of ['date', 'spend', 'revenue']) {
     if (!header.includes(col)) throw new Error(`Missing required column: "${col}". Header has: ${header.join(', ')}`);
   }
-  const dateIdx = header.indexOf('date');
-  const spendIdx = header.indexOf('spend');
-  const revIdx = header.indexOf('revenue');
-  const purIdx = header.indexOf('purchases');
+  const di = header.indexOf('date'), si = header.indexOf('spend'), ri = header.indexOf('revenue'), pi = header.indexOf('purchases');
 
   function normDate(s) {
     s = s.trim().replace(/^"|"$/g, '');
     if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
-    // MM/DD/YYYY -> YYYY-MM-DD
-    const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
     if (m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
-    // Excel-style 5/1/25 -> 2025-05-01
-    const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
-    if (m2) return `20${m2[3]}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
-    return s; // last-ditch
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+    if (m) return `20${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    return s;
   }
-
   function num(s) {
     if (s == null) return 0;
-    const cleaned = String(s).trim().replace(/^"|"$/g, '').replace(/[$,]/g, '');
-    const n = parseFloat(cleaned);
+    const n = parseFloat(String(s).trim().replace(/^"|"$/g, '').replace(/[$,]/g, ''));
     return isFinite(n) ? n : 0;
   }
-
   const points = [];
   for (let i = 1; i < lines.length; i++) {
     const cells = lines[i].split(',').map(c => c.trim());
-    const date = normDate(cells[dateIdx] || '');
-    const spend = num(cells[spendIdx]);
-    const revenue = num(cells[revIdx]);
-    const purchases = purIdx >= 0 ? num(cells[purIdx]) : 0;
+    const date = normDate(cells[di] || '');
     if (!date) continue;
-    points.push({ date, spend, revenue, purchases });
+    points.push({ date, spend: num(cells[si]), revenue: num(cells[ri]), purchases: pi >= 0 ? num(cells[pi]) : 0 });
   }
-  // Sort by date, dedupe (keep last)
   points.sort((a, b) => a.date.localeCompare(b.date));
   const seen = new Set(), out = [];
   for (let i = points.length - 1; i >= 0; i--) {
     if (seen.has(points[i].date)) continue;
-    seen.add(points[i].date);
-    out.unshift(points[i]);
+    seen.add(points[i].date); out.unshift(points[i]);
   }
   if (out.length < 8) throw new Error(`CSV needs at least 8 valid daily rows. Got ${out.length}.`);
   return out;
@@ -290,64 +498,46 @@ function hillMargRoas(s, V, K, h) {
   return (V * h * Kh * Math.pow(s, h - 1)) / Math.pow(Kh + sh, 2);
 }
 
-// 3-param Hill grid search, optionally with recency-decay weights.
 function fitSaturation(points, recencyHalfLifeDays) {
   const pts = points.filter(p => p.spend > 50 && p.revenue > 0);
   if (pts.length < 8) return { Vmax: 0, K: 1, h: 1, r2: 0, n: pts.length };
-
   let weights = null;
   if (recencyHalfLifeDays > 0) {
     const ts = pts.map(p => new Date(p.date).getTime());
     const maxTs = Math.max.apply(null, ts);
     weights = ts.map(t => Math.pow(0.5, (maxTs - t) / 86400000 / recencyHalfLifeDays));
   }
-
   const maxRev = Math.max.apply(null, pts.map(p => p.revenue));
   const maxSpend = Math.max.apply(null, pts.map(p => p.spend));
   const meanSpend = pts.reduce((a, p) => a + p.spend, 0) / pts.length;
-
   let best = { Vmax: maxRev * 2, K: meanSpend, h: 1, sse: Infinity };
   const VmaxGrid = Array.from({ length: 20 }, (_, i) => maxRev * (1 + (i / 19) * 8));
   const KGrid = Array.from({ length: 20 }, (_, i) => maxSpend * 0.05 * Math.pow(40, i / 19));
   const hGrid = [0.6, 0.75, 0.9, 1.0, 1.15, 1.4, 1.7, 2.2];
-
-  for (const V of VmaxGrid) {
-    for (const K of KGrid) {
-      for (const h of hGrid) {
-        let sse = 0;
-        const Kh = Math.pow(K, h);
-        for (let i = 0; i < pts.length; i++) {
-          const sh = Math.pow(pts[i].spend, h);
-          const e = (V * sh) / (Kh + sh) - pts[i].revenue;
-          sse += weights ? weights[i] * e * e : e * e;
-        }
-        if (sse < best.sse) best = { Vmax: V, K, h, sse };
-      }
+  for (const V of VmaxGrid) for (const K of KGrid) for (const h of hGrid) {
+    let sse = 0; const Kh = Math.pow(K, h);
+    for (let i = 0; i < pts.length; i++) {
+      const sh = Math.pow(pts[i].spend, h);
+      const e = (V * sh) / (Kh + sh) - pts[i].revenue;
+      sse += weights ? weights[i] * e * e : e * e;
     }
+    if (sse < best.sse) best = { Vmax: V, K, h, sse };
   }
-  // Refine pass
   const refV = Array.from({ length: 12 }, (_, i) => best.Vmax * (0.5 + (i / 11) * 1.0));
   const refK = Array.from({ length: 12 }, (_, i) => best.K * (0.3 + (i / 11) * 2.0));
   const refH = [best.h * 0.85, best.h * 0.93, best.h, best.h * 1.08, best.h * 1.18];
-  for (const V of refV) {
-    for (const K of refK) {
-      for (const h of refH) {
-        let sse = 0;
-        const Kh = Math.pow(K, h);
-        for (let i = 0; i < pts.length; i++) {
-          const sh = Math.pow(pts[i].spend, h);
-          const e = (V * sh) / (Kh + sh) - pts[i].revenue;
-          sse += weights ? weights[i] * e * e : e * e;
-        }
-        if (sse < best.sse) best = { Vmax: V, K, h, sse };
-      }
+  for (const V of refV) for (const K of refK) for (const h of refH) {
+    let sse = 0; const Kh = Math.pow(K, h);
+    for (let i = 0; i < pts.length; i++) {
+      const sh = Math.pow(pts[i].spend, h);
+      const e = (V * sh) / (Kh + sh) - pts[i].revenue;
+      sse += weights ? weights[i] * e * e : e * e;
     }
+    if (sse < best.sse) best = { Vmax: V, K, h, sse };
   }
-  // Weighted R²
   let mr = 0, ws = 0;
   for (let i = 0; i < pts.length; i++) {
-    const w = weights ? weights[i] : 1;
-    mr += pts[i].revenue * w; ws += w;
+    const w = weights ? weights[i] : 1; mr += pts[i].revenue * w; ws += w;
   }
   mr /= ws;
   let sst = 0;
@@ -372,7 +562,6 @@ function buildMonthFits(points, halfLife) {
   }
   return out;
 }
-
 function buildMonthMult(points) {
   const revSums = Array(12).fill(0), spendSums = Array(12).fill(0);
   for (const p of points) {
@@ -384,17 +573,14 @@ function buildMonthMult(points) {
   const overall = valid.length ? valid.reduce((a, x) => a + x, 0) / valid.length : 1;
   return roas.map(r => (r && overall ? r / overall : 1));
 }
-
 function medianAovOf(points) {
   const aovs = points.filter(p => p.purchases > 0).map(p => p.revenue / p.purchases).sort((a, b) => a - b);
   return aovs.length ? aovs[Math.floor(aovs.length / 2)] : 0;
 }
-
 function avgSpendOf(points) {
   const valid = points.filter(p => p.spend > 0);
   return valid.length ? valid.reduce((a, p) => a + p.spend, 0) / valid.length : 0;
 }
-
 function daysInMonth(month) { const y = new Date().getFullYear(); return new Date(y, month + 1, 0).getDate(); }
 
 // ============================================================
@@ -407,7 +593,7 @@ function fmtUsd(n) {
   if (Math.abs(n) >= 1e3) return (n<0?'-$':'$') + (Math.abs(n)/1e3).toFixed(1) + 'k';
   return (n<0?'-$':'$') + Math.round(Math.abs(n));
 }
-function fmtX(n) { return isFinite(n) ? n.toFixed(2) + 'x' : '—'; }
+function fmtX(n) { return isFinite(n) ? n.toFixed(2) + '×' : '—'; }
 function fmtInt(n) { return isFinite(n) ? Math.round(n).toLocaleString('en-US') : '—'; }
 
 // ============================================================
@@ -415,7 +601,7 @@ function fmtInt(n) { return isFinite(n) ? Math.round(n).toLocaleString('en-US') 
 // ============================================================
 const $ = (id) => document.getElementById(id);
 
-let DATA = null; // populated after CSV upload
+let DATA = null;
 const state = {
   brand: 'My Brand',
   month: new Date().getMonth(),
@@ -427,9 +613,6 @@ const state = {
   show3: false, show6: false, show12: false, showNc: false,
 };
 
-// ============================================================
-// File upload
-// ============================================================
 function loadCSVText(text, suggestedName) {
   $('parseError').classList.add('app-hidden');
   let points;
@@ -440,13 +623,11 @@ function loadCSVText(text, suggestedName) {
     $('parseError').classList.remove('app-hidden');
     return;
   }
-  const halfLife = state.hl;
-  const monthFits = buildMonthFits(points, halfLife);
+  const monthFits = buildMonthFits(points, state.hl);
   const monthMult = buildMonthMult(points);
   const aov = medianAovOf(points);
   const avg = avgSpendOf(points);
   DATA = { points, monthFits, monthMult, medianAov: aov, avgSpend: avg };
-  // Prefill brand from filename, AOV, current spend, project month
   if (suggestedName) state.brand = suggestedName.replace(/\.csv$/i, '').replace(/[_-]/g, ' ');
   state.aov = Math.round(aov);
   state.cur = Math.round(avg);
@@ -455,37 +636,68 @@ function loadCSVText(text, suggestedName) {
   $('landing').classList.add('app-hidden');
   $('app').classList.remove('app-hidden');
   render();
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function refit() {
   if (!DATA) return;
   DATA.monthFits = buildMonthFits(DATA.points, state.hl);
-  // monthMult and medianAov are recency-independent, no need to recompute.
   render();
 }
 
+// ============================================================
+// Upload — buttons + drag
+// ============================================================
 function setupUpload() {
-  const dz = $('dropzone');
   const input = $('fileInput');
+  const dz = $('dropzone');
+
+  $('btnPick').addEventListener('click', () => input.click());
+  $('btnDemo').addEventListener('click', () => loadCSVText(DEMO_CSV, 'demo brand'));
+
   input.addEventListener('change', (e) => {
-    const f = e.target.files[0]; if (!f) return;
+    const f = e.target.files && e.target.files[0]; if (!f) return;
     const r = new FileReader();
     r.onload = () => loadCSVText(r.result, f.name);
     r.readAsText(f);
   });
-  ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag'); }));
+
+  // Drop handlers — scoped to the dropzone only, so they don't fire
+  // every dragmove across the page.
+  let dragDepth = 0;
+  dz.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dragDepth++;
+    if (dragDepth === 1) dz.classList.add('drag');
+  });
+  dz.addEventListener('dragover', (e) => { e.preventDefault(); });
+  dz.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) dz.classList.remove('drag');
+  });
   dz.addEventListener('drop', (e) => {
-    const f = e.dataTransfer.files[0]; if (!f) return;
+    e.preventDefault();
+    dragDepth = 0;
+    dz.classList.remove('drag');
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => loadCSVText(r.result, f.name);
+    r.readAsText(f);
+  });
+  // Allow files dropped anywhere on the page to also work, but only as
+  // a passive backstop — avoid setting drag classes on dragover globally.
+  window.addEventListener('dragover', (e) => { e.preventDefault(); });
+  window.addEventListener('drop', (e) => {
+    if (dz.contains(e.target)) return; // already handled
+    e.preventDefault();
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (!f) return;
     const r = new FileReader();
     r.onload = () => loadCSVText(r.result, f.name);
     r.readAsText(f);
   });
 }
 
-// ============================================================
-// Wire input controls
-// ============================================================
 function hydrateInputs() {
   $('brand').value = state.brand;
   $('month').value = state.month;
@@ -507,7 +719,6 @@ function bindInputs() {
   ['vc','nc','aov','l3','l6','l12','lam','eff','tr','cur'].forEach(k => {
     $(k).addEventListener('input', () => { state[k] = parseFloat($(k).value) || 0; render(); });
   });
-  // Half-life requires a refit, not just a re-render
   $('hl').addEventListener('input', () => { state.hl = parseFloat($('hl').value) || 0; refit(); });
   $('brand').addEventListener('input', () => { state.brand = $('brand').value || 'Untitled'; render(); });
   $('month').addEventListener('change', () => { state.month = parseInt($('month').value, 10); render(); });
@@ -531,22 +742,21 @@ function bindInputs() {
     $('app').classList.add('app-hidden');
     $('landing').classList.remove('app-hidden');
     $('fileInput').value = '';
+    window.scrollTo({ top: 0, behavior: 'instant' });
   });
 }
 
 // ============================================================
-// Computation helpers (curve, optima)
+// Computation helpers
 // ============================================================
 function adstockGain() { return state.lam > 0 ? 1 / (1 - state.lam) : 1; }
 function fitFor(month) { return DATA.monthFits[month] || { Vmax:0, K:1, h:1, r2:0, n:0, fallback:true }; }
-
 function vmaxFor(month) {
   const monthFit = DATA.monthFits[month];
   if (!monthFit || !monthFit.Vmax) return 0;
   const mm = monthFit.fallback ? (DATA.monthMult[month] || 1) : 1;
   return monthFit.Vmax * mm * (1 + state.eff/100);
 }
-
 function findOptimum(margin) {
   const fit = fitFor(state.month);
   const Vmax = vmaxFor(state.month);
@@ -561,7 +771,6 @@ function findOptimum(margin) {
   }
   return { s: bestS, cm: bestCm };
 }
-
 function peakRoas() {
   const fit = fitFor(state.month);
   const Vmax = vmaxFor(state.month);
@@ -575,7 +784,6 @@ function peakRoas() {
   }
   return peak;
 }
-
 function findTargetRoasSpend(target) {
   const fit = fitFor(state.month);
   const Vmax = vmaxFor(state.month);
@@ -607,7 +815,7 @@ function render() {
   $('fitnote').textContent = 'V_max=' + fmtUsdFull(Vmax) + '/day, K=' + fmtUsdFull(fit.K) + ', h=' + fit.h.toFixed(2) +
     ', R²=' + (fit.r2 || 0).toFixed(2) +
     (state.hl > 0 ? ' · recency half-life ' + state.hl + 'd' : '') +
-    (state.lam > 0 ? ' · adstock λ=' + state.lam.toFixed(2) + ' (gain ' + adstockGain().toFixed(2) + 'x)' : '') +
+    (state.lam > 0 ? ' · adstock λ=' + state.lam.toFixed(2) + ' (gain ' + adstockGain().toFixed(2) + '×)' : '') +
     (state.eff !== 0 ? ' · efficiency adj ' + (state.eff>0?'+':'') + state.eff + '%' : '');
 
   if (state.aov > 0) {
@@ -634,7 +842,7 @@ function render() {
     { key:'cm_12m', lbl:'Max 12-month CM',   optS: findOptimum(m*state.l12).s,  margin:m*state.l12 },
     { key:'revenue', lbl:'Max Revenue',      optS: state.cur*5,                 margin:1 },
     { key:'nc_rev', lbl:'Max NC Revenue',    optS: state.cur*5,                 margin:ncFrac },
-    { key:'target_roas', lbl:'Target ROAS @ ' + fmtX(state.tr),  optS: trSpend, margin:m, unreachable: state.tr >= peak },
+    { key:'target_roas', lbl:'Target ROAS @ ' + fmtX(state.tr), optS: trSpend, margin:m, unreachable: state.tr >= peak },
   ];
   const goalById = Object.fromEntries(goalsList.map(g => [g.key, g]));
 
@@ -666,7 +874,6 @@ function render() {
   tileFor({ key:'__cur', lbl:'Current daily', optS: state.cur, margin:m }, false);
   tileFor({ key:'__curMo', lbl:'Current monthly', optS: state.cur, margin:m }, true);
 
-  // Chart data
   const activeOptS = goalById[state.goal] && !goalById[state.goal].unreachable ? goalById[state.goal].optS : state.cur;
   const anchor = Math.max(activeOptS || 0, state.cur, 1000);
   const minSpend = Math.max(50, anchor * 0.2);
@@ -688,7 +895,6 @@ function render() {
     });
   }
 
-  // Breakeven spend (Hill ROAS = 1/m). Reuse `peak`.
   const breakevenRoas = 1 / m;
   let breakevenSpend = null;
   if (breakevenRoas < peak) {
@@ -700,8 +906,7 @@ function render() {
     breakevenSpend = ((lo+hi)/2) / gain;
   }
 
-  // SVG render
-  const W = 800, H = 380, P = { l: 60, r: 60, t: 20, b: 30 };
+  const W = 800, H = 360, P = { l: 60, r: 60, t: 20, b: 28 };
   const innerW = W - P.l - P.r, innerH = H - P.t - P.b;
   const xMin = minSpend, xMax = maxSpend;
   const dolMin = Math.min(0, ...rows.map(r => Math.min(
@@ -720,76 +925,74 @@ function render() {
 
   const lines = [];
   lines.push('<defs>'
-    + '<linearGradient id="rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.4"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0.05"/></linearGradient>'
-    + '<linearGradient id="cmFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--green)" stop-opacity="0.28"/><stop offset="100%" stop-color="var(--green)" stop-opacity="0.04"/></linearGradient>'
-    + '<linearGradient id="cm3Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--purple3)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--purple3)" stop-opacity="0.03"/></linearGradient>'
-    + '<linearGradient id="cm6Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--purple6)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--purple6)" stop-opacity="0.03"/></linearGradient>'
-    + '<linearGradient id="cm12Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--purple12)" stop-opacity="0.22"/><stop offset="100%" stop-color="var(--purple12)" stop-opacity="0.03"/></linearGradient>'
+    + '<linearGradient id="rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E87A2D" stop-opacity="0.4"/><stop offset="100%" stop-color="#E87A2D" stop-opacity="0.05"/></linearGradient>'
+    + '<linearGradient id="cmFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d8a4e" stop-opacity="0.28"/><stop offset="100%" stop-color="#2d8a4e" stop-opacity="0.04"/></linearGradient>'
+    + '<linearGradient id="cm3Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9d6dff" stop-opacity="0.22"/><stop offset="100%" stop-color="#9d6dff" stop-opacity="0.03"/></linearGradient>'
+    + '<linearGradient id="cm6Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5b4bb3" stop-opacity="0.22"/><stop offset="100%" stop-color="#5b4bb3" stop-opacity="0.03"/></linearGradient>'
+    + '<linearGradient id="cm12Fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a2370" stop-opacity="0.22"/><stop offset="100%" stop-color="#2a2370" stop-opacity="0.03"/></linearGradient>'
     + '<linearGradient id="ncFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a06600" stop-opacity="0.18"/><stop offset="100%" stop-color="#a06600" stop-opacity="0.02"/></linearGradient>'
     + '</defs>');
   for (let i = 0; i <= 4; i++) {
     const y = P.t + (i/4)*innerH;
     lines.push('<line x1="' + P.l + '" y1="' + y + '" x2="' + (W - P.r) + '" y2="' + y + '" stroke="rgba(0,0,0,0.05)"/>');
     const dol = dolMax - (i/4)*(dolMax - dolMin);
-    lines.push('<text x="' + (P.l - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="10" fill="#777">' + fmtUsd(dol) + '</text>');
-    lines.push('<text x="' + (W - P.r + 6) + '" y="' + (y + 3) + '" font-size="10" fill="#777">' + (roasMax * (1 - i/4)).toFixed(2) + 'x</text>');
+    lines.push('<text x="' + (P.l - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="10" fill="#7a7670">' + fmtUsd(dol) + '</text>');
+    lines.push('<text x="' + (W - P.r + 6) + '" y="' + (y + 3) + '" font-size="10" fill="#7a7670">' + (roasMax * (1 - i/4)).toFixed(2) + '×</text>');
   }
   for (let i = 0; i <= 5; i++) {
     const s = xMin + (i/5)*(xMax - xMin);
-    lines.push('<text x="' + xPx(s) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="#777">' + fmtUsd(s) + '</text>');
+    lines.push('<text x="' + xPx(s) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="10" fill="#7a7670">' + fmtUsd(s) + '</text>');
   }
-
   lines.push('<path d="' + areaPath(rows, 'r',  yDolPx) + '" fill="url(#rev)"/>');
   lines.push('<path d="' + areaPath(rows, 'cm', yDolPx) + '" fill="url(#cmFill)"/>');
   if (state.show3)  lines.push('<path d="' + areaPath(rows, 'cm3', yDolPx)  + '" fill="url(#cm3Fill)"/>');
   if (state.show6)  lines.push('<path d="' + areaPath(rows, 'cm6', yDolPx)  + '" fill="url(#cm6Fill)"/>');
   if (state.show12) lines.push('<path d="' + areaPath(rows, 'cm12', yDolPx) + '" fill="url(#cm12Fill)"/>');
   if (state.showNc) lines.push('<path d="' + areaPath(rows, 'ncRev', yDolPx) + '" fill="url(#ncFill)"/>');
-  lines.push('<path d="' + linePath(rows, 'r', yDolPx)        + '" stroke="var(--accent)" stroke-width="1.6" fill="none"/>');
-  lines.push('<path d="' + linePath(rows, 'cm', yDolPx)       + '" stroke="var(--green)" stroke-width="1.6" fill="none"/>');
+  lines.push('<path d="' + linePath(rows, 'r', yDolPx)        + '" stroke="#E87A2D" stroke-width="1.6" fill="none"/>');
+  lines.push('<path d="' + linePath(rows, 'cm', yDolPx)       + '" stroke="#2d8a4e" stroke-width="1.6" fill="none"/>');
   lines.push('<path d="' + linePath(rows, 'roas', yRoasPx)    + '" stroke="#1a1a1a" stroke-width="2" fill="none"/>');
-  lines.push('<path d="' + linePath(rows, 'margRoas', yRoasPx) + '" stroke="var(--gray)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>');
-  if (state.show3)  lines.push('<path d="' + linePath(rows, 'cm3', yDolPx)  + '" stroke="var(--purple3)" stroke-width="1.6" fill="none"/>');
-  if (state.show6)  lines.push('<path d="' + linePath(rows, 'cm6', yDolPx)  + '" stroke="var(--purple6)" stroke-width="1.7" fill="none"/>');
-  if (state.show12) lines.push('<path d="' + linePath(rows, 'cm12', yDolPx) + '" stroke="var(--purple12)" stroke-width="1.8" fill="none"/>');
+  lines.push('<path d="' + linePath(rows, 'margRoas', yRoasPx) + '" stroke="#999" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>');
+  if (state.show3)  lines.push('<path d="' + linePath(rows, 'cm3', yDolPx)  + '" stroke="#9d6dff" stroke-width="1.6" fill="none"/>');
+  if (state.show6)  lines.push('<path d="' + linePath(rows, 'cm6', yDolPx)  + '" stroke="#5b4bb3" stroke-width="1.7" fill="none"/>');
+  if (state.show12) lines.push('<path d="' + linePath(rows, 'cm12', yDolPx) + '" stroke="#2a2370" stroke-width="1.8" fill="none"/>');
   if (state.showNc) lines.push('<path d="' + linePath(rows, 'ncRev', yDolPx) + '" stroke="#a06600" stroke-width="1.5" stroke-dasharray="2 3" fill="none"/>');
   lines.push('<line x1="' + P.l + '" y1="' + yDolPx(0) + '" x2="' + (W - P.r) + '" y2="' + yDolPx(0) + '" stroke="rgba(0,0,0,0.18)"/>');
   if (breakevenSpend && breakevenSpend >= xMin && breakevenSpend <= xMax) {
-    lines.push('<line x1="' + xPx(breakevenSpend) + '" y1="' + P.t + '" x2="' + xPx(breakevenSpend) + '" y2="' + (P.t + innerH) + '" stroke="#1877F2" stroke-width="1"/>');
-    lines.push('<text x="' + (xPx(breakevenSpend) + 6) + '" y="' + (P.t + 12) + '" font-size="10" fill="#1877F2">breakeven</text>');
+    lines.push('<line x1="' + xPx(breakevenSpend) + '" y1="' + P.t + '" x2="' + xPx(breakevenSpend) + '" y2="' + (P.t + innerH) + '" stroke="#1565c0" stroke-width="1"/>');
+    lines.push('<text x="' + (xPx(breakevenSpend) + 6) + '" y="' + (P.t + 12) + '" font-size="10" fill="#1565c0">breakeven</text>');
   }
   if (state.cur >= xMin && state.cur <= xMax) {
     lines.push('<line x1="' + xPx(state.cur) + '" y1="' + P.t + '" x2="' + xPx(state.cur) + '" y2="' + (P.t + innerH) + '" stroke="#666" stroke-dasharray="3 3" stroke-width="1"/>');
     lines.push('<text x="' + (xPx(state.cur) + 6) + '" y="' + (P.t + 26) + '" font-size="10" fill="#444">today</text>');
   }
   if (activeOptS && activeOptS >= xMin && activeOptS <= xMax) {
-    lines.push('<line x1="' + xPx(activeOptS) + '" y1="' + P.t + '" x2="' + xPx(activeOptS) + '" y2="' + (P.t + innerH) + '" stroke="var(--accent)" stroke-width="1.5"/>');
-    lines.push('<text x="' + (xPx(activeOptS) + 6) + '" y="' + (P.t + 40) + '" font-size="10" fill="var(--accent)" font-weight="500">' + (goalById[state.goal] ? goalById[state.goal].lbl : 'optimum') + '</text>');
+    lines.push('<line x1="' + xPx(activeOptS) + '" y1="' + P.t + '" x2="' + xPx(activeOptS) + '" y2="' + (P.t + innerH) + '" stroke="#B7410E" stroke-width="1.5"/>');
+    lines.push('<text x="' + (xPx(activeOptS) + 6) + '" y="' + (P.t + 40) + '" font-size="10" fill="#B7410E" font-weight="500">' + (goalById[state.goal] ? goalById[state.goal].lbl : 'optimum') + '</text>');
   }
   $('chart').innerHTML = lines.join('');
 
   const leg = [
-    { c: 'var(--accent)', t: 'Revenue', show: true, area: true },
-    { c: 'var(--green)',  t: 'CM/day',  show: true, area: true },
-    { c: '#1a1a1a',       t: 'ROAS',    show: true },
-    { c: 'var(--gray)',   t: 'Marginal ROAS', show: true, dash: true },
-    { c: '#1877F2',       t: 'Breakeven spend', show: !!breakevenSpend },
-    { c: 'var(--accent)', t: 'Selected goal optimum', show: !!activeOptS && activeOptS >= xMin && activeOptS <= xMax },
-    { c: '#666',          t: 'Today', show: state.cur >= xMin && state.cur <= xMax, dash: true },
-    { c: 'var(--purple3)',  t: '3-month CM',  show: state.show3,  area: true },
-    { c: 'var(--purple6)',  t: '6-month CM',  show: state.show6,  area: true },
-    { c: 'var(--purple12)', t: '12-month CM', show: state.show12, area: true },
-    { c: '#a06600',         t: 'NC revenue',  show: state.showNc, area: true },
+    { c: '#E87A2D', t: 'Revenue', show: true, area: true },
+    { c: '#2d8a4e', t: 'CM/day',  show: true, area: true },
+    { c: '#1a1a1a', t: 'ROAS',    show: true },
+    { c: '#999',    t: 'Marginal ROAS', show: true, dash: true },
+    { c: '#1565c0', t: 'Breakeven spend', show: !!breakevenSpend },
+    { c: '#B7410E', t: 'Selected goal optimum', show: !!activeOptS && activeOptS >= xMin && activeOptS <= xMax },
+    { c: '#666',    t: 'Today', show: state.cur >= xMin && state.cur <= xMax, dash: true },
+    { c: '#9d6dff', t: '3-month CM',  show: state.show3,  area: true },
+    { c: '#5b4bb3', t: '6-month CM',  show: state.show6,  area: true },
+    { c: '#2a2370', t: '12-month CM', show: state.show12, area: true },
+    { c: '#a06600', t: 'NC revenue',  show: state.showNc, area: true },
   ];
   $('legend').innerHTML = leg.filter(l => l.show).map(l => {
     let swatch;
     if (l.area) swatch = '<i style="height:8px; width:14px; background:' + l.c + '; opacity:0.45; border-radius:2px"></i>';
     else if (l.dash) swatch = '<i class="dash" style="border-top-color:' + l.c + '"></i>';
     else swatch = '<i style="background:' + l.c + '"></i>';
-    return '<span><span style="color:#555;display:inline-flex;align-items:center;gap:4px">' + swatch + l.t + '</span></span>';
+    return '<span><span style="display:inline-flex;align-items:center;gap:4px">' + swatch + l.t + '</span></span>';
   }).join('');
 
-  // Spend ladder
   const ladderStart = state.cur * 0.4;
   const ladderEnd = Math.max(activeOptS * 1.6, state.cur * 2.5);
   const step = (ladderEnd - ladderStart) / 29;
@@ -835,8 +1038,8 @@ function render() {
     tbody.appendChild(tr);
   }
 
-  $('foot').textContent = 'Hill saturation: revenue = V_max · s^h / (K^h + s^h). Optimum solves max [m · revenue(s) - s] where m = (1 - VC) · LTV. Adstock applies steady-state gain s_eff = s_raw / (1 - λ). '
-    + 'Per-month curves use only that month\'s daily observations when 8+ days exist; otherwise the global fit is scaled by month-of-year seasonality. '
+  $('foot').textContent = 'Hill saturation: revenue = V_max · s^h / (K^h + s^h). Optimum solves max [m · revenue(s) - s] where m = (1 - VC) · LTV. '
+    + 'Adstock applies steady-state gain s_eff = s_raw / (1 - λ). Per-month curves use only that month\'s daily observations when 8+ days exist; otherwise the global fit is scaled by month-of-year seasonality. '
     + 'Recency half-life weights each day by 0.5^(days_back / half_life) — set to 0 for equal weighting. '
     + 'Curve fit on ' + DATA.points.length + ' daily observations from ' + DATA.points[0].date + ' to ' + DATA.points[DATA.points.length-1].date + '. '
     + 'All math runs locally in your browser; your CSV never leaves your device.';
