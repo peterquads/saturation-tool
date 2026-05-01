@@ -4,52 +4,79 @@
 <meta charset="utf-8">
 <title>How to use this · Saturation Studio</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #faf7f2;
-  --bg-warm: #f5efe5;
-  --paper: #ffffff;
-  --ink: #1a1a1a;
-  --ink-2: #3a3a3a;
-  --muted: #7a7670;
-  --line: rgba(28,20,12,0.08);
-  --accent: #B7410E;
-  --accent-2: #E87A2D;
+  --surface: #f2f0ed;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #999999;
+  --accent: #1a1a1a;
+  --line: rgba(0,0,0,0.08);
+  --line-soft: rgba(0,0,0,0.04);
+  --accent-orange: #B7410E;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
 }
 * { box-sizing: border-box; }
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  background: var(--bg);
-  background-image: radial-gradient(1100px 600px at 90% -10%, rgba(232,122,45,0.06), transparent 70%);
-  color: var(--ink);
   margin: 0;
-  padding: 32px 24px 64px;
-  line-height: 1.65;
-  font-size: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.app-bg {
+  min-height: 100vh;
+  padding: 48px 24px 64px;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(200,180,160,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(160,180,210,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(180,200,170,0.10) 0%, transparent 50%);
 }
 .wrap { max-width: 720px; margin: 0 auto; }
-h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 36px; letter-spacing: -0.005em; margin: 0 0 8px; line-height: 1.15; }
-h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 22px; letter-spacing: -0.005em; margin: 36px 0 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.015em; }
+h1 { font-size: 40px; margin: 0 0 8px; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: 24px; margin: 40px 0 12px; padding-top: 24px; border-top: 1px solid var(--line); }
 h2:first-of-type { border-top: none; padding-top: 0; }
-h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 17px; margin: 22px 0 6px; }
-p { margin: 0 0 14px; color: var(--ink-2); }
-.eyebrow { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 12px; }
-.lede { font-size: 16px; color: var(--muted); margin-bottom: 28px; }
-ul, ol { color: var(--ink-2); padding-left: 22px; margin: 0 0 14px; }
+h3 { font-size: 18px; margin: 24px 0 8px; }
+p { margin: 0 0 14px; color: var(--text-secondary); }
+.eyebrow { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-muted); margin-bottom: 14px; font-weight: 500; }
+.lede { font-size: 17px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.55; }
+ul, ol { color: var(--text-secondary); padding-left: 22px; margin: 0 0 14px; }
 ul li, ol li { margin-bottom: 6px; }
-code { font-size: 13px; background: rgba(28,20,12,0.05); padding: 1px 5px; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
-a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
-.callout { padding: 14px 16px; background: rgba(232,122,45,0.06); border-left: 3px solid var(--accent); border-radius: 6px; margin: 18px 0; font-size: 14px; color: var(--ink-2); }
-.callout strong { color: var(--ink); }
-.foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
-.back { display: inline-block; font-size: 13px; margin-bottom: 24px; }
-table { border-collapse: collapse; font-size: 13px; margin: 8px 0 18px; }
-th, td { padding: 6px 12px; text-align: left; border-bottom: 1px solid var(--line); }
-th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+ul li strong, ol li strong { color: var(--text-primary); font-weight: 600; }
+code { font-size: 13px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 5px; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; color: var(--text-primary); }
+a { color: var(--text-primary); text-decoration: none; border-bottom: 1px solid currentColor; transition: color 0.12s; }
+a:hover { color: var(--accent-orange); }
+.callout {
+  padding: 18px 20px;
+  background: linear-gradient(140deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.4) 100%);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-left: 3px solid var(--accent-orange);
+  border-radius: 14px;
+  margin: 22px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow: 0 12px 32px -16px rgba(0,0,0,0.10), inset 0 1px 0 0 rgba(255,255,255,0.6);
+}
+.callout strong { color: var(--text-primary); font-weight: 600; }
+.foot { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12px; color: var(--text-muted); }
+.back { display: inline-block; font-size: 13px; margin-bottom: 28px; color: var(--text-secondary); border-bottom: none; }
+.back:hover { color: var(--text-primary); }
+table { border-collapse: collapse; font-size: 13px; margin: 12px 0 22px; width: 100%; }
+th, td { padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+th:first-child, td:first-child { padding-left: 0; }
+th { color: var(--text-muted); font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
 </style>
 </head>
 <body>
+<div class="app-bg">
 <div class="wrap">
 
 <a class="back" href="index.html">← Back to the tool</a>
@@ -174,6 +201,7 @@ th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: upp
   Saturation Studio · MIT licensed · <a href="index.html">Back to the tool</a> · <a href="https://github.com/peterquads/saturation-tool" target="_blank" rel="noopener">Source on GitHub</a>
 </div>
 
+</div>
 </div>
 </body>
 </html>
