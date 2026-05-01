@@ -529,7 +529,7 @@ input[type=file] { display: none; }
 
       <div class="section-h">Customer economics</div>
       <div class="row-input">
-        <span class="label-grp"><label>Variable cost</label><span class="tip" data-tip="Share of revenue eaten by COGS, shipping, payment processing before any contribution margin. 30–40% is typical for DTC. True-variable bucket only; fixed overhead doesn't belong here.">?</span></span>
+        <span class="label-grp"><label>Variable cost</label><span class="tip" data-tip="% of revenue lost to per-order costs BEFORE ad spend (COGS, shipping, payment fees, sales tax if you eat it). Ad spend is its own line, subtracted separately. Contribution margin = revenue × (1 - this) - ad spend. Don't include fixed overhead (rent, salaries, software) since CM is the number you have left BEFORE paying those. 30-40% typical for DTC.">?</span></span>
         <span class="value-grp"><span class="ctl"><input id="vc" type="number" step="1"/><span class="unit">%</span></span></span>
       </div>
       <div class="row-input">
@@ -537,7 +537,7 @@ input[type=file] { display: none; }
         <span class="value-grp"><span class="ctl"><input id="nc" type="number" step="1"/><span class="unit">%</span></span></span>
       </div>
       <div class="row-input">
-        <span class="label-grp"><label>Median AOV</label><span class="tip" data-tip="Median order value, in dollars. Auto-calculated from your CSV if a purchases column is present. Used to project orders and new-customer counts.">?</span></span>
+        <span class="label-grp"><label>AOV</label><span class="tip" data-tip="Average order value, in dollars. Auto-calculated as the median across your daily revenue/purchases when a purchases column is present in the CSV. Drives the orders and new-customer projections in the spend ladder.">?</span></span>
         <span class="value-grp"><span class="ctl"><input id="aov" type="number" step="1"/><span class="unit">$</span></span></span>
       </div>
 
