@@ -153,10 +153,41 @@ h3 { font-size: 16px; margin: 0 0 8px; letter-spacing: -0.01em; }
 .row { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 18px; }
 @media (min-width: 900px) { .row { grid-template-columns: 300px 1fr; } }
 
-/* Settings panel rows */
-.row-input { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line-soft); font-size: 12px; min-height: 36px; }
+/* Settings panel rows — single line per input, label-grp left, value-grp right */
+.row-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 12px;
+  min-height: 36px;
+}
 .row-input:last-child { border-bottom: none; }
-.row-input .ctl { display: inline-flex; align-items: center; gap: 6px; }
+.row-input .label-grp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+.row-input .label-grp label { font-weight: 500; color: inherit; }
+.row-input .value-grp {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.row-input .ctl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .row-input input[type=number], .row-input input[type=text], .row-input select {
   font-family: inherit;
   font-size: 12px;
@@ -170,14 +201,33 @@ h3 { font-size: 16px; margin: 0 0 8px; letter-spacing: -0.01em; }
   outline: none;
   transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
 }
-.row-input input[type=number] { width: 96px; text-align: right; }
-.row-input input[type=text] { width: 160px; }
+.row-input input[type=number] { width: 100px; text-align: right; }
+.row-input input[type=text] { width: 160px; text-align: left; }
 .row-input select { width: 160px; }
 .row-input input:focus, .row-input select:focus { border-color: var(--text-primary); background: #fff; box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
-.row-input label { color: var(--text-secondary); font-weight: 500; }
-.row-input .unit { color: var(--text-muted); font-size: 11px; margin-left: 4px; }
-.row-input .hint { color: var(--text-muted); font-size: 10px; }
-.section-h { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); margin-top: 16px; margin-bottom: 6px; padding-top: 12px; border-top: 1px solid var(--line-soft); font-weight: 500; }
+.row-input .unit { color: var(--text-muted); font-size: 11px; min-width: 14px; text-align: left; }
+.row-input .hint {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-style: italic;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+.row-input .hint:empty { display: none; }
+.section-h {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-top: 16px;
+  margin-bottom: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .section-h:first-child, .row-input + .section-h, .toggle + .section-h { padding-top: 10px; }
 
 .toggles { padding-top: 12px; margin-top: 12px; border-top: 1px solid var(--line-soft); }
@@ -307,6 +357,9 @@ button.btn.ghost:hover, a.btn.ghost:hover { background: rgba(0,0,0,0.04); }
 /* Flip tooltips that would clip on the right edge */
 .tip.tip-right::after { left: auto; right: -8px; transform: translateX(0); }
 .tip.tip-right::before { left: auto; right: 8px; transform: translateX(0); }
+/* Flip tooltips that would clip on the left edge */
+.tip.tip-left::after { left: -8px; right: auto; transform: translateX(0); }
+.tip.tip-left::before { left: 8px; right: auto; transform: translateX(0); }
 
 /* Conditional Target ROAS popup */
 .tr-group { display: none; padding: 12px 14px; margin: 8px 0 12px; background: rgba(232,122,45,0.06); border: 1px solid rgba(183,65,14,0.18); border-radius: 12px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); }
@@ -433,6 +486,7 @@ input[type=file] { display: none; }
   <div class="head-row">
     <div class="eyebrow" style="margin: 0">Saturation Studio</div>
     <span style="margin-left: auto"></span>
+    <a class="btn ghost" href="tutorial.html" target="_blank" rel="noopener">How to use</a>
     <button class="btn ghost" id="btnReload">↑ Upload different CSV</button>
   </div>
   <h1 id="title" style="margin-top: 6px"></h1>
@@ -446,21 +500,24 @@ input[type=file] { display: none; }
       <h2>Inputs</h2>
 
       <div class="section-h">Brand</div>
-      <div class="row-input"><label>Name</label><span class="ctl"><input id="brand" type="text"/></span></div>
+      <div class="row-input">
+        <span class="label-grp"><label>Name</label></span>
+        <span class="value-grp"><span class="ctl"><input id="brand" type="text"/></span></span>
+      </div>
 
       <div class="section-h">Period</div>
       <div class="row-input">
-        <label>Project month <span class="tip" data-tip="Which calendar month you're modeling. Uses that month's per-month curve fit if it has 8+ days of data, otherwise falls back to the global curve scaled by month-of-year seasonality.">?</span></label>
-        <select id="month">
+        <span class="label-grp"><label>Project month</label><span class="tip" data-tip="Which calendar month you're modeling. Uses that month's per-month curve fit if it has 8+ days of data, otherwise falls back to the global curve scaled by month-of-year seasonality.">?</span></span>
+        <span class="value-grp"><span class="ctl"><select id="month">
           <option value="0">January</option><option value="1">February</option><option value="2">March</option>
           <option value="3">April</option><option value="4">May</option><option value="5">June</option>
           <option value="6">July</option><option value="7">August</option><option value="8">September</option>
           <option value="9">October</option><option value="10">November</option><option value="11">December</option>
-        </select>
+        </select></span></span>
       </div>
       <div class="row-input">
-        <label>Goal (highlight) <span class="tip" data-tip="Which optimum gets the highlighted vertical line on the chart and the highlighted row in the spend ladder. All goals are computed simultaneously — this just picks which one to focus on.">?</span></label>
-        <select id="goal">
+        <span class="label-grp"><label>Goal</label><span class="tip" data-tip="Which optimum gets the highlighted vertical line on the chart and the highlighted row in the spend ladder. All goals are computed simultaneously; this just picks which one to focus on.">?</span></span>
+        <span class="value-grp"><span class="ctl"><select id="goal">
           <option value="cm">Max CM (today)</option>
           <option value="cm_3m" selected>Max 3-month CM</option>
           <option value="cm_6m">Max 6-month CM</option>
@@ -468,59 +525,76 @@ input[type=file] { display: none; }
           <option value="revenue">Max Revenue</option>
           <option value="nc_rev">Max NC Revenue</option>
           <option value="target_roas">Target ROAS</option>
-        </select>
+        </select></span></span>
       </div>
 
       <!-- Target ROAS appears only when that goal is selected -->
       <div id="trGroup" class="tr-group">
         <div class="label-line">Target ROAS settings</div>
         <div class="row-input">
-          <label>Target <span class="tip" data-tip="The ROAS you want to maintain. The tool finds the maximum daily spend that still hits this number on the saturation curve. If the target is higher than the model's peak ROAS, it'll flag as unreachable.">?</span></label>
-          <span class="ctl"><input id="tr" type="number" step="0.1"/><span class="unit">×</span></span>
+          <span class="label-grp"><label>Target</label><span class="tip" data-tip="The ROAS you want to maintain. The tool finds the maximum daily spend that still hits this number on the saturation curve. If the target is higher than the model's peak ROAS, it'll flag as unreachable.">?</span></span>
+          <span class="value-grp">
+            <span class="ctl"><input id="tr" type="number" step="0.1"/><span class="unit">×</span></span>
+            <span class="hint" id="trhint"></span>
+          </span>
         </div>
-        <div class="row-input"><span></span><span class="hint" id="trhint"></span></div>
       </div>
 
       <div class="section-h">Customer economics</div>
       <div class="row-input">
-        <label>Variable cost <span class="tip" data-tip="What share of revenue gets eaten by COGS, shipping, payment processing, etc. before any contribution margin. 30–40% is typical for DTC. This is the &quot;true variable&quot; bucket only — fixed overhead doesn't go here.">?</span></label>
-        <span class="ctl"><input id="vc" type="number" step="1"/><span class="unit">%</span></span>
+        <span class="label-grp"><label>Variable cost</label><span class="tip" data-tip="Share of revenue eaten by COGS, shipping, payment processing before any contribution margin. 30–40% is typical for DTC. True-variable bucket only; fixed overhead doesn't belong here.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="vc" type="number" step="1"/><span class="unit">%</span></span></span>
       </div>
       <div class="row-input">
-        <label>NC share <span class="tip" data-tip="Share of attributed revenue from new customers vs returning customers. Drives the &quot;NC ROAS&quot; and &quot;new customers&quot; columns in the spend ladder. Pull this from your CRM or platform reporting.">?</span></label>
-        <span class="ctl"><input id="nc" type="number" step="1"/><span class="unit">%</span></span>
+        <span class="label-grp"><label>NC share</label><span class="tip" data-tip="Share of attributed revenue from new customers vs returning customers. Drives the NC ROAS and new-customer columns in the spend ladder. Pull from your platform or CRM.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="nc" type="number" step="1"/><span class="unit">%</span></span></span>
       </div>
       <div class="row-input">
-        <label>Median AOV <span class="tip" data-tip="Median order value, in dollars. Auto-calculated from your CSV if &quot;purchases&quot; is present. Used to project orders and new-customer counts in the spend ladder.">?</span></label>
-        <span class="ctl"><input id="aov" type="number" step="1"/><span class="unit">$</span></span>
+        <span class="label-grp"><label>Median AOV</label><span class="tip" data-tip="Median order value, in dollars. Auto-calculated from your CSV if a purchases column is present. Used to project orders and new-customer counts.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="aov" type="number" step="1"/><span class="unit">$</span></span></span>
       </div>
 
-      <div class="section-h">LTV horizons <span class="tip tip-right" data-tip="Cumulative customer revenue at each horizon ÷ first-order revenue. So 1.4× means every $1 of first-order revenue earns another $0.40 over 90 days. Pull these from your cohort tool — generic defaults will give you the wrong answer.">?</span></div>
-      <div class="row-input"><label>3-month LTV</label><span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">×</span></span></div>
-      <div class="row-input"><span></span><span class="hint" id="l3hint"></span></div>
-      <div class="row-input"><label>6-month LTV</label><span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">×</span></span></div>
-      <div class="row-input"><span></span><span class="hint" id="l6hint"></span></div>
-      <div class="row-input"><label>12-month LTV</label><span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">×</span></span></div>
-      <div class="row-input"><span></span><span class="hint" id="l12hint"></span></div>
+      <div class="section-h"><span>LTV horizons</span><span class="tip tip-right" data-tip="Cumulative customer revenue at each horizon ÷ first-order revenue. 1.4× means every $1 of first-order revenue earns another $0.40 over 90 days. Pull these from your cohort tool. Generic defaults will give you the wrong answer.">?</span></div>
+      <div class="row-input">
+        <span class="label-grp"><label>3-month LTV</label></span>
+        <span class="value-grp">
+          <span class="ctl"><input id="l3" type="number" step="0.05"/><span class="unit">×</span></span>
+          <span class="hint" id="l3hint"></span>
+        </span>
+      </div>
+      <div class="row-input">
+        <span class="label-grp"><label>6-month LTV</label></span>
+        <span class="value-grp">
+          <span class="ctl"><input id="l6" type="number" step="0.05"/><span class="unit">×</span></span>
+          <span class="hint" id="l6hint"></span>
+        </span>
+      </div>
+      <div class="row-input">
+        <span class="label-grp"><label>12-month LTV</label></span>
+        <span class="value-grp">
+          <span class="ctl"><input id="l12" type="number" step="0.05"/><span class="unit">×</span></span>
+          <span class="hint" id="l12hint"></span>
+        </span>
+      </div>
 
       <div class="section-h">Modeling</div>
       <div class="row-input">
-        <label>Recency half-life <span class="tip" data-tip="How fast older days lose weight in the curve fit. 60d means a point 2 months ago counts half as much as today's. Lower (30d) = curve tracks recent regime tighter but ignores history. Higher (180d+) = curve smooths across longer windows. 0 disables decay.">?</span></label>
-        <span class="ctl"><input id="hl" type="number" step="15" min="0"/><span class="unit">days</span></span>
+        <span class="label-grp"><label>Recency half-life</label><span class="tip" data-tip="How fast older days lose weight in the curve fit. 60d means a point 2 months ago counts half as much as today's. Lower = curve tracks recent regime tighter; higher = smooths across longer windows. Set to 0 to disable decay.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="hl" type="number" step="15" min="0"/><span class="unit">d</span></span></span>
       </div>
       <div class="row-input">
-        <label>Adstock decay (λ) <span class="tip" data-tip="Geometric carryover: yesterday's spend still influences today's revenue at rate λ. Steady-state effective spend = raw / (1−λ). Try 0.3 for typical Meta carryover, 0 to disable. Doesn't change reported ROAS, just the curve shape.">?</span></label>
-        <span class="ctl"><input id="lam" type="number" step="0.05" min="0" max="0.95"/><span class="unit">↻</span></span>
+        <span class="label-grp"><label>Adstock decay</label><span class="tip" data-tip="Geometric carryover: yesterday's spend still influences today's revenue at rate λ. Steady-state effective spend = raw / (1−λ). Try 0.3 for typical Meta carryover, 0 to disable.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="lam" type="number" step="0.05" min="0" max="0.95"/><span class="unit">λ</span></span></span>
       </div>
       <div class="row-input">
-        <label>Efficiency adj. <span class="tip" data-tip="Manually scale V_max up or down. +10% = &quot;I think the platform is going to deliver 10% better than the historical fit suggests&quot; (creative refresh, new placement). −10% = the opposite. Pure scalar — affects everything proportionally.">?</span></label>
-        <span class="ctl"><input id="eff" type="number" step="1"/><span class="unit">%</span></span>
+        <span class="label-grp"><label>Efficiency adj.</label><span class="tip" data-tip="Manually scale V_max up or down. +10% = &quot;I expect the platform to deliver 10% better than the historical fit&quot; (creative refresh, new placement). −10% = the opposite. Pure scalar.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="eff" type="number" step="1"/><span class="unit">%</span></span></span>
       </div>
 
       <div class="section-h">Current state</div>
       <div class="row-input">
-        <label>Today's daily spend <span class="tip" data-tip="Where the &quot;today&quot; line sits on the chart and which spend ladder row gets the gray highlight. Auto-set to the average of your CSV's spend column on upload.">?</span></label>
-        <span class="ctl"><input id="cur" type="number" step="100"/><span class="unit">$</span></span>
+        <span class="label-grp"><label>Today's daily spend</label><span class="tip" data-tip="Where the &quot;today&quot; line sits on the chart and which spend ladder row gets the gray highlight. Auto-set to the average of your CSV's spend column on upload.">?</span></span>
+        <span class="value-grp"><span class="ctl"><input id="cur" type="number" step="100"/><span class="unit">$</span></span></span>
       </div>
 
       <div class="toggles">
@@ -969,6 +1043,19 @@ function bindInputs() {
   });
   $('btnExportLadder').addEventListener('click', exportLadderCSV);
   $('btnExportSummary').addEventListener('click', exportSummaryCSV);
+
+  // Tooltip auto-flip: when a .tip is too close to a viewport edge, anchor
+  // its popup to the opposite side so it doesn't clip. We toggle classes
+  // on hover, not on render, so only the active tip pays the layout cost.
+  document.querySelectorAll('.tip').forEach(tip => {
+    tip.addEventListener('mouseenter', () => {
+      const r = tip.getBoundingClientRect();
+      const TOOLTIP_HALF = 124; // half of the 240px tooltip width + padding
+      tip.classList.remove('tip-right', 'tip-left');
+      if (r.right + TOOLTIP_HALF > window.innerWidth - 8) tip.classList.add('tip-right');
+      else if (r.left - TOOLTIP_HALF < 8) tip.classList.add('tip-left');
+    });
+  });
 }
 
 // ============================================================
