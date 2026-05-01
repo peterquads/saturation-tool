@@ -423,7 +423,7 @@ input[type=file] { display: none; }
   <div class="eyebrow">Saturation Studio</div>
   <h1>Where does your next ad dollar break even?</h1>
   <div class="muted" style="max-width: 720px; font-size: 13px;">
-    Upload daily ad spend + revenue. Get a Hill saturation curve, optimal-spend recommendations across 3-, 6-, and 12-month LTV horizons, and a scenario chart you can tune live. Runs entirely in your browser — your CSV never leaves your machine.
+    Upload daily ad spend + revenue. Get a Hill saturation curve, optimal-spend recommendations across 3-, 6-, and 12-month LTV horizons, and a scenario chart you can tune live. Runs entirely in your browser. Your CSV never leaves your machine.
   </div>
 
   <div id="dropzone" class="upload-card">
@@ -445,7 +445,7 @@ input[type=file] { display: none; }
       <h3>What it does</h3>
       <ul>
         <li>Fits a <strong>Hill saturation curve</strong> to your daily spend → revenue: <code>r = V·s^h / (K^h + s^h)</code></li>
-        <li>Computes <strong>optimal daily spend</strong> for seven goals — including 3m, 6m, and 12m LTV-extended CM</li>
+        <li>Computes <strong>optimal daily spend</strong> for seven goals including 3m, 6m, and 12m LTV-extended CM</li>
         <li>Tunes <strong>VC %, NC share, LTV multipliers, adstock decay, target ROAS, and recency weighting</strong> live</li>
         <li>Per-month curves with seasonality fallback so November ≠ February</li>
       </ul>
@@ -1214,7 +1214,7 @@ function render() {
   const fit = fitFor(state.month);
   const Vmax = vmaxFor(state.month);
 
-  $('title').textContent = (state.brand || 'Untitled') + ' — Saturation Model';
+  $('title').textContent = (state.brand || 'Untitled') + ' · Saturation Model';
   $('subtitle').textContent = months[state.month] + ' (' + days + ' days) · fit on ' + fit.n + ' obs (' + (fit.fallback ? 'global w/ seasonality' : 'per-month') + ') · '
     + DATA.points.length + ' total daily observations';
   $('fitnote').textContent = 'V_max=' + fmtUsdFull(Vmax) + '/day, K=' + fmtUsdFull(fit.K) + ', h=' + fit.h.toFixed(2) +
@@ -1237,7 +1237,7 @@ function render() {
   const peak = peakRoas();
   const trSpend = findTargetRoasSpend(state.tr);
   $('trhint').textContent = state.tr >= peak
-    ? 'unreachable — model peak ROAS is ' + fmtX(peak)
+    ? 'unreachable. Model peak ROAS is ' + fmtX(peak)
     : 'reachable at ' + fmtUsdFull(trSpend) + '/day (peak ' + fmtX(peak) + ')';
 
   const goalsList = [
@@ -1445,7 +1445,7 @@ function render() {
 
   $('foot').textContent = 'Hill saturation: revenue = V_max · s^h / (K^h + s^h). Optimum solves max [m · revenue(s) - s] where m = (1 - VC) · LTV. '
     + 'Adstock applies steady-state gain s_eff = s_raw / (1 - λ). Per-month curves use only that month\'s daily observations when 8+ days exist; otherwise the global fit is scaled by month-of-year seasonality. '
-    + 'Recency half-life weights each day by 0.5^(days_back / half_life) — set to 0 for equal weighting. '
+    + 'Recency half-life weights each day by 0.5^(days_back / half_life). Set to 0 for equal weighting. '
     + 'Curve fit on ' + DATA.points.length + ' daily observations from ' + DATA.points[0].date + ' to ' + DATA.points[DATA.points.length-1].date + '. '
     + 'All math runs locally in your browser; your CSV never leaves your device.';
 }
